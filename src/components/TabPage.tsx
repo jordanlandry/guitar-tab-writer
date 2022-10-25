@@ -23,7 +23,6 @@ export default function TabPage() {
   const play = (a: any) => {
     const audio = new Audio();
     audio.src = a;
-
     new Audio(a).play();
   };
 
@@ -73,7 +72,7 @@ export default function TabPage() {
             play("src/assets/audio/" + n + ".wav");
           }
         }
-        await sleep(100);
+        await sleep((60 / a.bpm / 32) * 4000);
       }
     }
 
