@@ -47,8 +47,6 @@ export default function TabPage() {
     // floor divide it to get the octave
 
     let n = a.tuning[guitarString - 1][0];
-    // let o = tuning[guitarString - 1][1];
-
     let o = "";
     if (n.length === 3) {
       n += a.tuning[guitarString - 1][1];
@@ -62,21 +60,57 @@ export default function TabPage() {
   };
 
   let prevBeat = 0;
+  let prevMeasure = 0;
+
   // Run through the notes
+
   const playTime = async () => {
-    a.data.forEach(async (note: noteData) => {
-      if (note.beatCount > prevBeat) {
-        // Run through the beats
-        for (let i = prevBeat; i < note.beatCount; i++) {
-          if (i === note.beatCount - 1) {
-            let n = getNote(note.fret, note.guitarString);
-            play("src/assets/audio/" + n + ".wav");
-          }
-          setOffset((prev) => offset + 5);
-          await sleep((60 / a.bpm / 32) * 1000);
+    for (const measure of a.data) {
+      let j = 0;
+      for (let i = 0; i < 32; i++) {
+        if (measure[i] && measure[j].beatCount === i) {
+          const n = getNote(measure[j].fret, measure[j].guitarString);
+          play("src/assets/audio/" + n + ".wav");
+          j++;
         }
+        await sleep(100);
       }
-    });
+    }
+
+    // a.data.forEach(async (measure) => {
+    //   for (let i = 0; i < 32; i++) {
+    //     if (measure[i] && measure[i].beatCount === i) {
+    //       const n = getNote(measure[i].fret, measure[i].guitarString);
+    //       play("src/assets/audio/" + n + ".wav");
+    //     }
+
+    //     await sleep(50);
+    //   }
+    //   await sleep(1000);
+    // });
+
+    // a.data.forEach(async (note: noteData) => {
+    //   for (let i = prevMeasure; i < note.measure; i++) {
+    //     for (let j = prevBeat; j < note.beatCount; j++) {
+    //       let n = getNote(note.fret, note.guitarString);
+    //       play("src/assets/audio/" + n + ".wav");
+    //       await sleep(1000);
+    //     }
+    //   }
+    // });
+    // a.data.forEach(async (note: noteData) => {
+    //   if (note.beatCount > prevBeat) {
+    //     // Run through the beats
+    //     for (let i = prevBeat; i < note.beatCount + 32 * note.measure; i++) {
+    //       if (i === note.beatCount + 32 * note.measure - 1) {
+    //         let n = getNote(note.fret, note.guitarString);
+    //         play("src/assets/audio/" + n + ".wav");
+    //       }
+    //       setOffset((prev) => offset + 5);
+    //       await sleep((60 / a.bpm / 32) * 2000);
+    //     }
+    //   }
+    // });
   };
 
   return (
@@ -85,7 +119,7 @@ export default function TabPage() {
       <div>{a.bpm} BPM</div>
       <PlayFill onClick={playTime} cursor="pointer" />
       <div className="vertical-line" style={{ left: `${offset}px` }}></div>
-      <Chart data={a} />
+      <Chart data={a} key={0} />
     </div>
   );
 }

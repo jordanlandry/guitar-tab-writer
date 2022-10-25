@@ -8,6 +8,6 @@ export interface noteData {
 export interface songType {
   name: string;
   bpm: number;
-  data: noteData[];
+  data: noteData[][];
   tuning: string[];
 }
