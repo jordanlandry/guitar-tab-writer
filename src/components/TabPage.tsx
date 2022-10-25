@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { PlayFill } from "react-bootstrap-icons";
 import { test } from "../data/test";
 import sound from "../assets/audio/test.wav";
@@ -13,23 +13,36 @@ import b2 from "../assets/audio/b2.wav";
 import Chart from "./Chart";
 import { noteData } from "../data/interfaces";
 
-type Props = {};
+export default function TabPage() {
+  const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-export default function TabPage({}: Props) {
+  const [offset, setOffset] = useState(35);
+
   const a = test;
 
   const play = (a: any) => {
     new Audio(a).play();
   };
 
-  const playTime = () => {
-    a.data.forEach((note: noteData) => {
-      if (note.guitarString === 1 && note.fret === 3) play(g2);
-      if (note.guitarString === 2 && note.fret === 2) play(b2);
-      if (note.guitarString === 3 && note.fret === 0) play(d2);
-      if (note.guitarString === 4 && note.fret === 0) play(g3);
-      if (note.guitarString === 5 && note.fret === 0) play(b3);
-      if (note.guitarString === 6 && note.fret === 3) play(g4);
+  let prevBeat = 0;
+  // Run through the notes
+  const playTime = async () => {
+    a.data.forEach(async (note: noteData) => {
+      if (note.beatCount > prevBeat) {
+        // Run through the beats
+        for (let i = prevBeat; i < note.beatCount; i++) {
+          if (i === note.beatCount - 1) {
+            if (note.guitarString === 1 && note.fret === 3) play(g2);
+            if (note.guitarString === 2 && note.fret === 2) play(b2);
+            if (note.guitarString === 3 && note.fret === 0) play(d2);
+            if (note.guitarString === 4 && note.fret === 0) play(g3);
+            if (note.guitarString === 5 && note.fret === 0) play(b3);
+            if (note.guitarString === 6 && note.fret === 3) play(g4);
+          }
+          setOffset((prev) => offset + 5);
+          await sleep(750);
+        }
+      }
     });
   };
 
@@ -38,6 +51,7 @@ export default function TabPage({}: Props) {
       <div>{a.name}</div>
       <div>{a.bpm} BPM</div>
       <PlayFill onClick={playTime} cursor="pointer" />
+      <div className="horizontal-line" style={{ left: `${offset}px` }}></div>
       <Chart />
     </div>
   );

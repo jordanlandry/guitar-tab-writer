@@ -9,3 +9,17 @@
   height: 1px;
   background-color: black;
 }
+
+.note {
+  background-color: white;
+  z-index: 2;
+}
+
+.horizontal-line {
+  width: 1px;
+  background-color: black;
+  height: 110px;
+  position: fixed;
+  /* left: 35px; */
+  outline: 2px solid white;
+}
