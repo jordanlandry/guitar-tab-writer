@@ -1,8 +1,10 @@
 import { songType } from "./interfaces";
 
 export const test: songType = {
-  name: "Under a glass Moon",
-  bpm: 100,
+  name: "Under a glass moon solo",
+  bpm: 146,
+
+  tuning: ["e2", "a3", "d3", "g3", "b4", "e4"],
 
   // Should play a G chord
 

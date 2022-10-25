@@ -1,28 +1,10 @@
 import React from "react";
+import { songType } from "../data/interfaces";
 
-type Props = {};
+type Props = { data: songType };
 
-export default function Chart({}: Props) {
-  return (
-    <div className="chart-wrapper">
-      <span className="flex-align">
-        E<div className="line"></div>
-      </span>
-      <span className="flex-align">
-        B<div className="line"></div>
-      </span>
-      <span className="flex-align">
-        G<div className="line"></div>
-      </span>
-      <span className="flex-align">
-        D<div className="line"></div>
-      </span>
-      <span className="flex-align">
-        A<div className="line"></div>
-      </span>
-      <span className="flex-align">
-        E<div className="line"></div>
-      </span>
-    </div>
-  );
+export default function Chart({ data }: Props) {
+  console.log(data);
+
+  return <div className="chart-wrapper"></div>;
 }

@@ -9,4 +9,5 @@ export interface songType {
   name: string;
   bpm: number;
   data: noteData[];
+  tuning: string[];
 }

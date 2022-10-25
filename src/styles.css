@@ -15,7 +15,7 @@
   z-index: 2;
 }
 
-.horizontal-line {
+.vertical-line {
   width: 1px;
   background-color: black;
   height: 110px;

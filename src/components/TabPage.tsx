@@ -27,9 +27,6 @@ export default function TabPage() {
     new Audio(a).play();
   };
 
-  const tuning = ["e2", "a3", "d3", "g3", "b4", "e4"];
-  // const tuning = 'a';
-
   const notes = [
     "ab",
     "a",
@@ -49,14 +46,14 @@ export default function TabPage() {
     // and get the remainder of it and the number of notes to get the note index,
     // floor divide it to get the octave
 
-    let n = tuning[guitarString - 1][0];
+    let n = a.tuning[guitarString - 1][0];
     // let o = tuning[guitarString - 1][1];
 
     let o = "";
     if (n.length === 3) {
-      n += tuning[guitarString - 1][1];
-      o = tuning[guitarString - 1][2];
-    } else o = tuning[guitarString - 1][1];
+      n += a.tuning[guitarString - 1][1];
+      o = a.tuning[guitarString - 1][2];
+    } else o = a.tuning[guitarString - 1][1];
 
     let i = notes.indexOf(n) + fret;
     o = parseInt(o) + Math.floor(i / notes.length) + ""; // Get octave
@@ -74,16 +71,9 @@ export default function TabPage() {
           if (i === note.beatCount - 1) {
             let n = getNote(note.fret, note.guitarString);
             play("src/assets/audio/" + n + ".wav");
-
-            // if (note.guitarString === 1 && note.fret === 3) play(g2);
-            // if (note.guitarString === 2 && note.fret === 2) play(b2);
-            // if (note.guitarString === 3 && note.fret === 0) play(d2);
-            // if (note.guitarString === 4 && note.fret === 0) play(g3);
-            // if (note.guitarString === 5 && note.fret === 0) play(b3);
-            // if (note.guitarString === 6 && note.fret === 3) play(g4);
           }
           setOffset((prev) => offset + 5);
-          await sleep(200);
+          await sleep((60 / a.bpm / 32) * 1000);
         }
       }
     });
@@ -94,8 +84,8 @@ export default function TabPage() {
       <div>{a.name}</div>
       <div>{a.bpm} BPM</div>
       <PlayFill onClick={playTime} cursor="pointer" />
-      <div className="horizontal-line" style={{ left: `${offset}px` }}></div>
-      <Chart />
+      <div className="vertical-line" style={{ left: `${offset}px` }}></div>
+      <Chart data={a} />
     </div>
   );
 }
