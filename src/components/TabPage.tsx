@@ -66,12 +66,12 @@ export default function TabPage() {
 
   const playTime = async () => {
     for (const measure of a.data) {
-      let j = 0;
       for (let i = 0; i < 32; i++) {
-        if (measure[i] && measure[j].beatCount === i) {
-          const n = getNote(measure[j].fret, measure[j].guitarString);
-          play("src/assets/audio/" + n + ".wav");
-          j++;
+        for (let j = 0; j < 32; j++) {
+          if (measure[j] && measure[j].beatCount === i) {
+            const n = getNote(measure[j].fret, measure[j].guitarString);
+            play("src/assets/audio/" + n + ".wav");
+          }
         }
         await sleep(100);
       }
