@@ -5,13 +5,16 @@ import { song } from "../data/song";
 
 import Chart from "./Chart";
 import { noteData } from "../data/interfaces";
+import { song1 } from "../data/song1";
 
 export default function TabPage() {
   const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
   const [offset, setOffset] = useState(35);
+  const [currentSong, setCurrentSong] = useState(test);
 
-  const a = song;
+  // const currentSong = song;
+  // const b = song1;
 
   const play = (a: any) => {
     const audio = new Audio();
@@ -19,7 +22,7 @@ export default function TabPage() {
     new Audio(a).play();
   };
 
-  const notes = [
+  const NOTE_VALUES = [
     "ab",
     "a",
     "bb",
@@ -38,17 +41,17 @@ export default function TabPage() {
     // and get the remainder of it and the number of notes to get the note index,
     // floor divide it to get the octave
 
-    let n = a.tuning[guitarString - 1][0];
+    let n = currentSong.tuning[guitarString - 1][0];
     let o = "";
     if (n.length === 3) {
-      n += a.tuning[guitarString - 1][1];
-      o = a.tuning[guitarString - 1][2];
-    } else o = a.tuning[guitarString - 1][1];
+      n += currentSong.tuning[guitarString - 1][1];
+      o = currentSong.tuning[guitarString - 1][2];
+    } else o = currentSong.tuning[guitarString - 1][1];
 
-    let i = notes.indexOf(n) + fret;
-    o = parseInt(o) + Math.floor(i / notes.length) + ""; // Get octave
+    let i = NOTE_VALUES.indexOf(n) + fret;
+    o = parseInt(o) + Math.floor(i / NOTE_VALUES.length) + ""; // Get octave
 
-    return notes[i % notes.length] + o;
+    return NOTE_VALUES[i % NOTE_VALUES.length] + o;
   };
 
   let prevBeat = 0;
@@ -57,7 +60,7 @@ export default function TabPage() {
   // Run through the notes
 
   const playTime = async () => {
-    for (const measure of a.data) {
+    for (const measure of currentSong.data) {
       for (let i = 0; i < 32; i++) {
         let startTime = Date.now();
         for (let j = 0; j < 32; j++) {
@@ -72,18 +75,23 @@ export default function TabPage() {
         // 60 seconds / bpm if my bpm is 120, then it gives me 0.5s per measure
         // 0.5s / 32 gives me about 0.016s per beat, or 16ms, but it makes it way too quick idk why
 
-        await sleep((60 / a.bpm / 32) * 3500 - (finishTime - startTime));
+        await sleep(
+          (60 / currentSong.bpm / 32) * 3500 - (finishTime - startTime)
+        );
       }
     }
   };
 
   return (
     <div>
-      <div>{a.name}</div>
-      <div>{a.bpm} BPM</div>
+      <div>{currentSong.name}</div>
+      <div>{currentSong.bpm} BPM</div>
       <PlayFill onClick={playTime} cursor="pointer" />
-      <div className="vertical-line" style={{ left: `${offset}px` }}></div>
-      <Chart data={a} key={0} />
+      <div
+        className="vertical-line"
+        style={{ left: `${offset}px`, top: "53px" }}
+      ></div>
+      <Chart data={currentSong} key={0} />
     </div>
   );
 }

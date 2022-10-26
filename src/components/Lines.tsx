@@ -1,4 +1,4 @@
-import React from "react";
+import nextId from "react-id-generator";
 
 type Props = { tuning: any; top: number };
 
@@ -6,8 +6,9 @@ export default function Lines({ tuning, top }: Props) {
   const el = tuning.map((t: any, i: number) => {
     return (
       <div
+        key={nextId()}
         className="line"
-        style={{ position: "fixed", top: top + i * 19 + "px" }}
+        style={{ position: "fixed", top: top + 1 + i * 18 + "px" }}
       />
     );
   });
