@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import nextId from "react-id-generator";
 import { songType } from "../data/interfaces";
 import Lines from "./Lines";
+import { SpeedContext } from "./TabPage";
 
 type Props = { data: songType };
 

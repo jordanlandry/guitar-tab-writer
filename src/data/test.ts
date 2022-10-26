@@ -2,7 +2,7 @@ import { songType } from "./interfaces";
 
 export const test: songType = {
   name: "Through the fire and flames",
-  bpm: 50,
+  bpm: 200,
 
   tuning: ["e2", "a3", "d3", "g3", "b4", "e4"],
 

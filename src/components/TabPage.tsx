@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { createContext, useContext, useState } from "react";
 import { PlayFill } from "react-bootstrap-icons";
 import { test } from "../data/test";
 import { song } from "../data/song";
@@ -7,14 +7,13 @@ import Chart from "./Chart";
 import { noteData } from "../data/interfaces";
 import { song1 } from "../data/song1";
 
+export const SpeedContext = createContext<null | number>(null);
 export default function TabPage() {
   const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
   const [offset, setOffset] = useState(35);
   const [currentSong, setCurrentSong] = useState(test);
-
-  // const currentSong = song;
-  // const b = song1;
+  const [speed, setSpeed] = useState(1); // Number between 0 and 1 (0.5 is half speed)
 
   const play = (a: any) => {
     const audio = new Audio();
@@ -36,6 +35,7 @@ export default function TabPage() {
     "gb",
     "g",
   ];
+
   const getNote = (fret: number, guitarString: number): string => {
     // Get notes index of initial string note, add the stringNumber value,
     // and get the remainder of it and the number of notes to get the note index,
@@ -43,6 +43,7 @@ export default function TabPage() {
 
     let n = currentSong.tuning[guitarString - 1][0];
     let o = "";
+    // Don't get octave but get if it's a sharp or flat
     if (n.length === 3) {
       n += currentSong.tuning[guitarString - 1][1];
       o = currentSong.tuning[guitarString - 1][2];
@@ -76,22 +77,40 @@ export default function TabPage() {
         // 0.5s / 32 gives me about 0.016s per beat, or 16ms, but it makes it way too quick idk why
 
         await sleep(
-          (60 / currentSong.bpm / 32) * 3500 - (finishTime - startTime)
+          ((60 / currentSong.bpm / 32) * 3500 * 1) / speed -
+            (finishTime - startTime)
         );
       }
     }
   };
 
+  const updateSpeed = (e: any) => {
+    setSpeed(e.target.value);
+  };
+
   return (
     <div>
-      <div>{currentSong.name}</div>
-      <div>{currentSong.bpm} BPM</div>
-      <PlayFill onClick={playTime} cursor="pointer" />
-      <div
-        className="vertical-line"
-        style={{ left: `${offset}px`, top: "53px" }}
-      ></div>
-      <Chart data={currentSong} key={0} />
+      <SpeedContext.Provider value={speed}>
+        <div>{currentSong.name}</div>
+        <div>{currentSong.bpm} BPM</div>
+        <PlayFill onClick={playTime} cursor="pointer" />
+        <div
+          className="vertical-line"
+          style={{ left: `${offset}px`, top: "53px" }}
+        ></div>
+
+        <input
+          type="range"
+          onChange={updateSpeed}
+          value={speed}
+          max={1}
+          min={0.01}
+          step={0.01}
+        />
+        <span>{Math.floor(speed * 100)}%</span>
+
+        <Chart data={currentSong} key={0} />
+      </SpeedContext.Provider>
     </div>
   );
 }
