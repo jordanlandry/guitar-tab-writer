@@ -1,14 +1,7 @@
 import React, { useState } from "react";
 import { PlayFill } from "react-bootstrap-icons";
 import { test } from "../data/test";
-import sound from "../assets/audio/test.wav";
-
-// import g2 from "../assets/audio/g2.wav";
-// import g3 from "../assets/audio/g3.wav";
-// import g4 from "../assets/audio/g4.wav";
-// import b3 from "../assets/audio/b3.wav";
-// import d2 from "../assets/audio/d3.wav";
-// import b2 from "../assets/audio/b2.wav";
+import { song } from "../data/song";
 
 import Chart from "./Chart";
 import { noteData } from "../data/interfaces";
@@ -18,7 +11,7 @@ export default function TabPage() {
 
   const [offset, setOffset] = useState(35);
 
-  const a = test;
+  const a = song;
 
   const play = (a: any) => {
     const audio = new Audio();
@@ -66,50 +59,22 @@ export default function TabPage() {
   const playTime = async () => {
     for (const measure of a.data) {
       for (let i = 0; i < 32; i++) {
+        let startTime = Date.now();
         for (let j = 0; j < 32; j++) {
           if (measure[j] && measure[j].beatCount === i) {
             const n = getNote(measure[j].fret, measure[j].guitarString);
             play("src/assets/audio/" + n + ".wav");
           }
         }
-        await sleep((60 / a.bpm / 32) * 4000);
+        let finishTime = Date.now(); // Get elapsed time in case it takes a while, wait less time
+        // Not sure why its * 3500, it should be 60 / bpm / 32 * 1000 to get ms but it's too quick for some reason
+        // Each note is a 32nd note which is why there's the / 32
+        // 60 seconds / bpm if my bpm is 120, then it gives me 0.5s per measure
+        // 0.5s / 32 gives me about 0.016s per beat, or 16ms, but it makes it way too quick idk why
+
+        await sleep((60 / a.bpm / 32) * 3500 - (finishTime - startTime));
       }
     }
-
-    // a.data.forEach(async (measure) => {
-    //   for (let i = 0; i < 32; i++) {
-    //     if (measure[i] && measure[i].beatCount === i) {
-    //       const n = getNote(measure[i].fret, measure[i].guitarString);
-    //       play("src/assets/audio/" + n + ".wav");
-    //     }
-
-    //     await sleep(50);
-    //   }
-    //   await sleep(1000);
-    // });
-
-    // a.data.forEach(async (note: noteData) => {
-    //   for (let i = prevMeasure; i < note.measure; i++) {
-    //     for (let j = prevBeat; j < note.beatCount; j++) {
-    //       let n = getNote(note.fret, note.guitarString);
-    //       play("src/assets/audio/" + n + ".wav");
-    //       await sleep(1000);
-    //     }
-    //   }
-    // });
-    // a.data.forEach(async (note: noteData) => {
-    //   if (note.beatCount > prevBeat) {
-    //     // Run through the beats
-    //     for (let i = prevBeat; i < note.beatCount + 32 * note.measure; i++) {
-    //       if (i === note.beatCount + 32 * note.measure - 1) {
-    //         let n = getNote(note.fret, note.guitarString);
-    //         play("src/assets/audio/" + n + ".wav");
-    //       }
-    //       setOffset((prev) => offset + 5);
-    //       await sleep((60 / a.bpm / 32) * 2000);
-    //     }
-    //   }
-    // });
   };
 
   return (
