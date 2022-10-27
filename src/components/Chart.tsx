@@ -16,6 +16,14 @@ export default function Chart({ data }: Props) {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  // Note properties for sizing and positioning
+  const STRING_COUNT = data.tuning.length;
+  const LINE_HEIGHT = 18;
+  const BASE_X = 50;
+  const BASE_Y = 102;
+  const X_OFFSET = width / 64;
+
+  // Show the tuning
   const dataElements = data.tuning.map((note) => {
     return (
       <span key={nextId()}>
@@ -23,11 +31,11 @@ export default function Chart({ data }: Props) {
           {/* Tuning */}
           <span
             style={{
-              backgroundColor: "white",
+              backgroundColor: "var(--background-color)",
               position: "absolute",
-              transform: "translateY(50px)",
-              padding: "2px",
-              fontSize: "1.1rem",
+              transform: "translateY(12px)",
+              marginTop: "6px",
+              fontSize: "1.05rem",
               zIndex: 5,
             }}
           >
@@ -39,19 +47,12 @@ export default function Chart({ data }: Props) {
     );
   });
 
-  const STRING_COUNT = data.tuning.length;
-
-  const LINE_HEIGHT = 18;
-  const BASE_X = 50;
-  const BASE_Y = 102;
-  const X_OFFSET = width / 64;
-
   // Notes
   const noteElements = data.data.map((notes, index) => {
     let lineCount = Math.floor(index / 2);
     let measureCount = index % 2; // 0 or 1 (0 is left, 1 is right)
 
-    const n = notes.map((note) => {
+    const fretElements = notes.map((note) => {
       let noteX =
         BASE_X + X_OFFSET * note.beatCount + (width / 2) * measureCount;
 
@@ -65,7 +66,7 @@ export default function Chart({ data }: Props) {
         <div
           key={nextId()}
           style={{
-            backgroundColor: "white",
+            backgroundColor: "var(--background-color)",
             position: "absolute",
             left: `${noteX}px`,
             top: `${noteY}px`,
@@ -76,9 +77,10 @@ export default function Chart({ data }: Props) {
       );
     });
 
-    return <div key={nextId()}>{n}</div>;
+    return <div key={nextId()}>{fretElements}</div>;
   });
 
+  // Lines
   const measureElements = data.data.map((measure, i) => {
     // There will be 2 positions for mx
     let mx = i % 2 === 0 ? 35 : 35 + width / 2;

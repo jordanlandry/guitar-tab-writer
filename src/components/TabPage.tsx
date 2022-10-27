@@ -11,16 +11,17 @@ export const SpeedContext = createContext<null | number>(null);
 export default function TabPage() {
   const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-  const [offset, setOffset] = useState(35);
-  const [currentSong, setCurrentSong] = useState(song);
+  const [currentSong, setCurrentSong] = useState(test);
   const [speed, setSpeed] = useState(1); // Number between 0 and 1 (0.5 is half speed)
+  const [volume, setVolume] = useState(1); // Number between 0 and 1 (0.5 is half volume)
 
   const [playing, setPlaying] = useState(true);
 
   const play = (a: any) => {
     const audio = new Audio();
     audio.src = a;
-    new Audio(a).play();
+    audio.volume = volume;
+    audio.play();
   };
 
   const NOTE_VALUES = [
@@ -58,29 +59,31 @@ export default function TabPage() {
     return NOTE_VALUES[i % NOTE_VALUES.length] + o;
   };
 
-  let prevBeat = 0;
-  let prevMeasure = 0;
+  const BEATS_PER_MEASURE = 32;
 
   // Run through the notes
   const playTime = async () => {
     for (const measure of currentSong.data) {
-      for (let i = 0; i < 32; i++) {
+      for (let i = 0; i < BEATS_PER_MEASURE; i++) {
         let startTime = Date.now();
-        for (let j = 0; j < 32; j++) {
+
+        // Find the notes that are on this beat
+        for (let j = 0; j < BEATS_PER_MEASURE; j++) {
           if (measure[j] && measure[j].beatCount === i) {
+            // Play the note
             const n = getNote(measure[j].fret, measure[j].guitarString);
             play("src/assets/audio/" + n + ".wav");
           }
         }
         let finishTime = Date.now(); // Get elapsed time in case it takes a while, wait less time
 
+        // Wait until the next beat
         await sleep(
           ((60 / currentSong.bpm / 32) * 4000 * 1) / speed -
             (finishTime - startTime)
         );
       }
     }
-
     setPlaying(false);
   };
 
@@ -88,22 +91,22 @@ export default function TabPage() {
     setSpeed(e.target.value);
   };
 
+  const updateVolume = (e: any) => {
+    setVolume(e.target.value);
+  };
+
   const handlePlayClick = () => {
     playTime();
   };
 
   return (
-    <div>
+    <div className="tab-page">
       <SpeedContext.Provider value={speed}>
         <div>{currentSong.name}</div>
         <div>{currentSong.bpm} BPM</div>
-
         <PlayFill onClick={handlePlayClick} cursor="pointer" />
-        {/* <div
-          className="vertical-line"
-          style={{ left: `${offset}px`, top: "53px" }}
-        ></div> */}
 
+        <br />
         <input
           type="range"
           onChange={updateSpeed}
@@ -112,7 +115,17 @@ export default function TabPage() {
           min={0.01}
           step={0.01}
         />
-        <span>{Math.floor(speed * 100)}%</span>
+        <span>{Math.floor(speed * 100)}% Speed</span>
+        <br />
+        <input
+          type="range"
+          onChange={updateVolume}
+          value={volume}
+          max={1}
+          min={0}
+          step={0.01}
+        />
+        <span>{Math.floor(volume * 100)}% Volume</span>
 
         <Chart data={currentSong} key={0} />
       </SpeedContext.Provider>
