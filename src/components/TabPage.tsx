@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useRef, useState } from "react";
 import { PauseFill, PlayFill } from "react-bootstrap-icons";
 import { test } from "../data/test";
 import { song } from "../data/song";
@@ -14,13 +14,22 @@ export default function TabPage() {
   const [currentSong, setCurrentSong] = useState(test);
   const [speed, setSpeed] = useState(1); // Number between 0 and 1 (0.5 is half speed)
   const [volume, setVolume] = useState(1); // Number between 0 and 1 (0.5 is half volume)
+  const [playing, setPlaying] = useState(false);
 
-  const [playing, setPlaying] = useState(true);
+  // Refs
+  const playingRef = useRef(playing);
+  playingRef.current = playing;
+
+  const speedRef = useRef(speed);
+  speedRef.current = speed;
+
+  const volumeRef = useRef(volume);
+  volumeRef.current = volume;
 
   const play = (a: any) => {
     const audio = new Audio();
     audio.src = a;
-    audio.volume = volume;
+    audio.volume = volumeRef.current;
     audio.play();
   };
 
@@ -69,6 +78,8 @@ export default function TabPage() {
 
         // Find the notes that are on this beat
         for (let j = 0; j < BEATS_PER_MEASURE; j++) {
+          if (!playingRef.current) return; // Return here
+
           if (measure[j] && measure[j].beatCount === i) {
             // Play the note
             const n = getNote(measure[j].fret, measure[j].guitarString);
@@ -79,7 +90,7 @@ export default function TabPage() {
 
         // Wait until the next beat
         await sleep(
-          ((60 / currentSong.bpm / 32) * 4000 * 1) / speed -
+          ((60 / currentSong.bpm / 32) * 4000 * 1) / speedRef.current -
             (finishTime - startTime)
         );
       }
@@ -95,16 +106,22 @@ export default function TabPage() {
     setVolume(e.target.value);
   };
 
-  const handlePlayClick = () => {
-    playTime();
+  const playClick = () => {
+    setPlaying(true);
   };
+
+  if (playing) playTime();
 
   return (
     <div className="tab-page">
       <SpeedContext.Provider value={speed}>
         <div>{currentSong.name}</div>
         <div>{currentSong.bpm} BPM</div>
-        <PlayFill onClick={handlePlayClick} cursor="pointer" />
+        {playingRef.current ? (
+          <PauseFill onClick={() => setPlaying(false)} />
+        ) : (
+          <PlayFill onClick={playClick} />
+        )}
 
         <br />
         <input
