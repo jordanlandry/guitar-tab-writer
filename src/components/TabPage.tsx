@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState } from "react";
-import { PlayFill } from "react-bootstrap-icons";
+import { PauseFill, PlayFill } from "react-bootstrap-icons";
 import { test } from "../data/test";
 import { song } from "../data/song";
 
@@ -12,8 +12,10 @@ export default function TabPage() {
   const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
   const [offset, setOffset] = useState(35);
-  const [currentSong, setCurrentSong] = useState(test);
+  const [currentSong, setCurrentSong] = useState(song);
   const [speed, setSpeed] = useState(1); // Number between 0 and 1 (0.5 is half speed)
+
+  const [playing, setPlaying] = useState(true);
 
   const play = (a: any) => {
     const audio = new Audio();
@@ -43,7 +45,8 @@ export default function TabPage() {
 
     let n = currentSong.tuning[guitarString - 1][0];
     let o = "";
-    // Don't get octave but get if it's a sharp or flat
+
+    // Don't show octave but show if it's a sharp or flat
     if (n.length === 3) {
       n += currentSong.tuning[guitarString - 1][1];
       o = currentSong.tuning[guitarString - 1][2];
@@ -59,7 +62,6 @@ export default function TabPage() {
   let prevMeasure = 0;
 
   // Run through the notes
-
   const playTime = async () => {
     for (const measure of currentSong.data) {
       for (let i = 0; i < 32; i++) {
@@ -71,21 +73,23 @@ export default function TabPage() {
           }
         }
         let finishTime = Date.now(); // Get elapsed time in case it takes a while, wait less time
-        // Not sure why its * 3500, it should be 60 / bpm / 32 * 1000 to get ms but it's too quick for some reason
-        // Each note is a 32nd note which is why there's the / 32
-        // 60 seconds / bpm if my bpm is 120, then it gives me 0.5s per measure
-        // 0.5s / 32 gives me about 0.016s per beat, or 16ms, but it makes it way too quick idk why
 
         await sleep(
-          ((60 / currentSong.bpm / 32) * 3500 * 1) / speed -
+          ((60 / currentSong.bpm / 32) * 4000 * 1) / speed -
             (finishTime - startTime)
         );
       }
     }
+
+    setPlaying(false);
   };
 
   const updateSpeed = (e: any) => {
     setSpeed(e.target.value);
+  };
+
+  const handlePlayClick = () => {
+    playTime();
   };
 
   return (
@@ -93,11 +97,12 @@ export default function TabPage() {
       <SpeedContext.Provider value={speed}>
         <div>{currentSong.name}</div>
         <div>{currentSong.bpm} BPM</div>
-        <PlayFill onClick={playTime} cursor="pointer" />
-        <div
+
+        <PlayFill onClick={handlePlayClick} cursor="pointer" />
+        {/* <div
           className="vertical-line"
           style={{ left: `${offset}px`, top: "53px" }}
-        ></div>
+        ></div> */}
 
         <input
           type="range"

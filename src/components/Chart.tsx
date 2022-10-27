@@ -25,7 +25,7 @@ export default function Chart({ data }: Props) {
             style={{
               backgroundColor: "white",
               position: "absolute",
-              transform: "translateY(-10px)",
+              transform: "translateY(50px)",
               padding: "2px",
               fontSize: "1.1rem",
               zIndex: 5,
@@ -39,26 +39,36 @@ export default function Chart({ data }: Props) {
     );
   });
 
+  const STRING_COUNT = data.tuning.length;
+
+  const LINE_HEIGHT = 18;
+  const BASE_X = 50;
+  const BASE_Y = 102;
+  const X_OFFSET = width / 64;
+
+  // Notes
   const noteElements = data.data.map((notes, index) => {
-    let mx = (index * width) / 2;
+    let lineCount = Math.floor(index / 2);
+    let measureCount = index % 2; // 0 or 1 (0 is left, 1 is right)
+
     const n = notes.map((note) => {
-      // let nx = 50 + (note.beatCount * index) / 32;
+      let noteX =
+        BASE_X + X_OFFSET * note.beatCount + (width / 2) * measureCount;
 
-      let nx = 50 + note.beatCount * (width / 64);
-      let ny = 37 + note.guitarString * 18;
-      // let ny = 80 + note.guitarString * 25;
+      let noteY =
+        BASE_Y +
+        note.guitarString * LINE_HEIGHT +
+        lineCount * LINE_HEIGHT * (STRING_COUNT + 1) -
+        2; // StringCount + 1 because there is 1 line after each bar, - 2 to center it
 
-      // let ny = 80;
       return (
         <div
           key={nextId()}
           style={{
-            position: "absolute",
-            top: ny + "px",
-            left: nx + mx + "px",
             backgroundColor: "white",
-            padding: "2px",
-            borderRadius: "5px",
+            position: "absolute",
+            left: `${noteX}px`,
+            top: `${noteY}px`,
           }}
         >
           {note.fret}
@@ -72,7 +82,7 @@ export default function Chart({ data }: Props) {
   const measureElements = data.data.map((measure, i) => {
     // There will be 2 positions for mx
     let mx = i % 2 === 0 ? 35 : 35 + width / 2;
-    let my = 65 + 125 * Math.floor(i / 2);
+    let my = 127 + 125 * Math.floor(i / 2);
 
     if (mx > width) {
       mx = 35;
