@@ -19,8 +19,8 @@ export default function Chart({ data }: Props) {
   // Note properties for sizing and positioning
   const STRING_COUNT = data.tuning.length;
   const LINE_HEIGHT = 18;
-  const BASE_X = 50;
-  const BASE_Y = 102;
+  const BASE_X = 45;
+  const BASE_Y = 103;
   const X_OFFSET = width / 64;
 
   // Show the tuning
@@ -80,16 +80,12 @@ export default function Chart({ data }: Props) {
     return <div key={nextId()}>{fretElements}</div>;
   });
 
+  const BASE_M_Y = 127;
   // Lines
   const measureElements = data.data.map((measure, i) => {
     // There will be 2 positions for mx
     let mx = i % 2 === 0 ? 35 : 35 + width / 2;
-    let my = 127 + 125 * Math.floor(i / 2);
-
-    if (mx > width) {
-      mx = 35;
-      my += 12;
-    }
+    let my = BASE_M_Y + 125 * Math.floor(i / 2);
 
     return (
       <div key={nextId()}>
@@ -98,7 +94,7 @@ export default function Chart({ data }: Props) {
           className="measure-line"
           style={{
             position: "absolute",
-            top: my + "px",
+            top: my + 1 + "px",
             left: mx + "px",
             width: "3px",
             height: "90px",
