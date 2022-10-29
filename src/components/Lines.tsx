@@ -8,7 +8,7 @@ export default function Lines({ tuning, top }: Props) {
       <div
         key={nextId()}
         className="line"
-        style={{ position: "fixed", top: top + 1 + i * 18 + "px" }}
+        style={{ position: "absolute", top: top + 1 + i * 18 + "px" }}
       />
     );
   });

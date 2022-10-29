@@ -101,7 +101,7 @@ export default function Chart({ data }: Props) {
             top: my + "px",
             left: mx + "px",
             width: "3px",
-            height: "95px",
+            height: "90px",
           }}
         />
       </div>
