@@ -78,7 +78,7 @@ export default function TabPage() {
 
         // Find the notes that are on this beat
         for (let j = 0; j < BEATS_PER_MEASURE; j++) {
-          if (!playingRef.current) return; // Return here
+          if (!playingRef.current) return; // Return here so it fully stops
 
           if (measure[j] && measure[j].beatCount === i) {
             // Play the note
