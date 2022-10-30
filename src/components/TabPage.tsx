@@ -1,24 +1,28 @@
-import React, { createContext, useContext, useRef, useState } from "react";
+import { createContext, useEffect, useRef, useState } from "react";
 import { PauseFill, PlayFill } from "react-bootstrap-icons";
-import { test } from "../data/test";
-import { song } from "../data/song";
 
-import Chart from "./Chart";
-import { noteData } from "../data/interfaces";
-import { stairway } from "../data/stairway";
 import mySong from "../data/my_song";
+import { test } from "../data/test";
+import Chart from "./Chart";
 
-export const SpeedContext = createContext<null | number>(null);
 export const InstrumentContext = createContext<null | number>(null);
+export const HeightContext = createContext<null | number>(null);
 export default function TabPage() {
   const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-  const [currentSong, setCurrentSong] = useState(mySong);
+  const [currentSong, setCurrentSong] = useState(test);
   const [speed, setSpeed] = useState(1); // Number between 0 and 1 (0.5 is half speed)
   const [volume, setVolume] = useState(1); // Number between 0 and 1 (0.5 is half volume)
   const [playing, setPlaying] = useState(false);
 
   const [activeInstrument, setActiveInstrument] = useState(0);
+
+  const [height, setHeight] = useState(0);
+  const heightRef = useRef<any>(null);
+
+  useEffect(() => {
+    setHeight(heightRef.current?.clientHeight || 0);
+  });
 
   // Refs
   const playingRef = useRef(playing);
@@ -119,8 +123,17 @@ export default function TabPage() {
 
   if (playing) playTime();
 
+  // Elements
+  const instrumentDropdown = currentSong.instruments.map((instrument) => {
+    return (
+      <option value={instrument.name} key={instrument.name}>
+        {instrument.name}
+      </option>
+    );
+  });
+
   return (
-    <div className="tab-page">
+    <div className="tab-page" ref={heightRef}>
       <div className="tab-page--header">
         <div className="tab-page--top">
           <div className="tab-page--name">{currentSong.name}</div>
@@ -161,13 +174,13 @@ export default function TabPage() {
           />
           <span>{Math.floor(volume * 100)}% Volume</span>
         </div>
+        <select className="instrument-select">{instrumentDropdown}</select>
       </div>
-
-      <InstrumentContext.Provider value={activeInstrument}>
-        <SpeedContext.Provider value={speed}>
+      <HeightContext.Provider value={height}>
+        <InstrumentContext.Provider value={activeInstrument}>
           <Chart data={currentSong} key={0} />
-        </SpeedContext.Provider>
-      </InstrumentContext.Provider>
+        </InstrumentContext.Provider>
+      </HeightContext.Provider>
     </div>
   );
 }

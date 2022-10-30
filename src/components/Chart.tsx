@@ -1,15 +1,16 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import nextId from "react-id-generator";
 import { songType } from "../data/interfaces";
 import Lines from "./Lines";
-import { InstrumentContext } from "./TabPage";
+import { HeightContext, InstrumentContext } from "./TabPage";
 
 type Props = { data: songType };
 
 export default function Chart({ data }: Props) {
   const [width, setWidth] = useState(window.innerWidth);
-
   const activeInstrument = useContext(InstrumentContext)!;
+
+  const topOffset = useContext(HeightContext)!;
 
   // Update the width when the window is resized
   useEffect(() => {
@@ -20,13 +21,13 @@ export default function Chart({ data }: Props) {
 
   // Note properties for sizing and positioning
   const STRING_COUNT = data.tuning.length;
-  const LINE_HEIGHT = 18;
+  const LINE_HEIGHT = 15;
   const BASE_X = 45;
-  const BASE_Y = 103;
+  const BASE_Y = topOffset;
   const X_OFFSET = width / 64;
 
   // Show the tuning
-  const dataElements = data.tuning.map((note) => {
+  const dataElements = data.tuning.map((note, i) => {
     return (
       <span key={nextId()}>
         <div className="uppercase">
@@ -35,9 +36,7 @@ export default function Chart({ data }: Props) {
             style={{
               backgroundColor: "var(--background-color)",
               position: "absolute",
-              transform: "translateY(-54px)",
-              marginTop: "6px",
-              fontSize: "1.05rem",
+              top: BASE_Y + LINE_HEIGHT * (i - 0.5) + "px",
               zIndex: 5,
             }}
           >
@@ -59,11 +58,12 @@ export default function Chart({ data }: Props) {
         let noteX =
           BASE_X + X_OFFSET * note.beatCount + (width / 2) * measureCount;
 
+        // Need to add height of measure to each note
         let noteY =
           BASE_Y +
-          note.guitarString * LINE_HEIGHT +
-          lineCount * LINE_HEIGHT * (STRING_COUNT + 1) -
-          2; // StringCount + 1 because there is 1 line after each bar, - 2 to center it
+          (note.guitarString - 1.5) * LINE_HEIGHT +
+          STRING_COUNT * LINE_HEIGHT * Math.floor(index / 2) +
+          Math.floor(index / 2) * 20; // i * 10 is the margin
 
         return (
           <div
@@ -84,17 +84,21 @@ export default function Chart({ data }: Props) {
     }
   );
 
-  const BASE_M_Y = 127;
   // Lines
   const measureElements = data.instruments[activeInstrument].measures.map(
     (measure, i) => {
       // There will be 2 positions for mx
       let mx = i % 2 === 0 ? 35 : 35 + width / 2;
-      let my = BASE_M_Y + 125 * Math.floor(i / 2);
+      let my =
+        topOffset +
+        STRING_COUNT * LINE_HEIGHT * Math.floor(i / 2) +
+        Math.floor(i / 2) * 20; // i * 10 is the margin
 
       return (
         <div key={nextId()}>
-          {i % 2 === 0 ? <Lines tuning={data.tuning} top={my} /> : null}
+          {i % 2 === 0 ? (
+            <Lines tuning={data.tuning} top={my} lineHeight={LINE_HEIGHT} />
+          ) : null}
           <div
             className="measure-line"
             style={{
@@ -102,7 +106,7 @@ export default function Chart({ data }: Props) {
               top: my + 1 + "px",
               left: mx + "px",
               width: "3px",
-              height: "90px",
+              height: `${(STRING_COUNT - 1) * LINE_HEIGHT}px`,
             }}
           />
         </div>
