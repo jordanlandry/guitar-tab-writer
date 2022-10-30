@@ -14,6 +14,9 @@ TODO Add the following features
 - Editible tabs
 - Create your own tabs
 - Add more instruments
+- Change BPM at a particular spot
+- Change timing eg 3/4 time, 4/4 time etc
+- Change timing ^ at particular spot
 - Be able to upload custom instrument sounds
 - Save use created tabs to local storage
 - Save tabs to PDFs
