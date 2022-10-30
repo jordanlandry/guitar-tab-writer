@@ -9,6 +9,7 @@ import { stairway } from "../data/stairway";
 import mySong from "../data/my_song";
 
 export const SpeedContext = createContext<null | number>(null);
+export const InstrumentContext = createContext<null | number>(null);
 export default function TabPage() {
   const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
@@ -16,6 +17,8 @@ export default function TabPage() {
   const [speed, setSpeed] = useState(1); // Number between 0 and 1 (0.5 is half speed)
   const [volume, setVolume] = useState(1); // Number between 0 and 1 (0.5 is half volume)
   const [playing, setPlaying] = useState(false);
+
+  const [activeInstrument, setActiveInstrument] = useState(0);
 
   // Refs
   const playingRef = useRef(playing);
@@ -26,6 +29,9 @@ export default function TabPage() {
 
   const volumeRef = useRef(volume);
   volumeRef.current = volume;
+
+  const activeInstrumentRef = useRef(activeInstrument);
+  activeInstrumentRef.current = activeInstrument;
 
   const play = (a: any) => {
     const audio = new Audio();
@@ -73,7 +79,7 @@ export default function TabPage() {
 
   // Run through the notes
   const playTime = async () => {
-    for (const measure of currentSong.data) {
+    for (const measure of currentSong.instruments[activeInstrument].measures) {
       for (let i = 0; i < BEATS_PER_MEASURE; i++) {
         let startTime = Date.now();
 
@@ -157,9 +163,11 @@ export default function TabPage() {
         </div>
       </div>
 
-      <SpeedContext.Provider value={speed}>
-        <Chart data={currentSong} key={0} />
-      </SpeedContext.Provider>
+      <InstrumentContext.Provider value={activeInstrument}>
+        <SpeedContext.Provider value={speed}>
+          <Chart data={currentSong} key={0} />
+        </SpeedContext.Provider>
+      </InstrumentContext.Provider>
     </div>
   );
 }

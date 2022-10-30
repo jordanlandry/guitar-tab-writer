@@ -2,11 +2,14 @@ import React, { useContext, useEffect, useState } from "react";
 import nextId from "react-id-generator";
 import { songType } from "../data/interfaces";
 import Lines from "./Lines";
+import { InstrumentContext } from "./TabPage";
 
 type Props = { data: songType };
 
 export default function Chart({ data }: Props) {
   const [width, setWidth] = useState(window.innerWidth);
+
+  const activeInstrument = useContext(InstrumentContext)!;
 
   // Update the width when the window is resized
   useEffect(() => {
@@ -47,61 +50,65 @@ export default function Chart({ data }: Props) {
   });
 
   // Notes
-  const noteElements = data.data.map((notes, index) => {
-    let lineCount = Math.floor(index / 2);
-    let measureCount = index % 2; // 0 or 1 (0 is left, 1 is right)
+  const noteElements = data.instruments[activeInstrument].measures.map(
+    (notes, index) => {
+      let lineCount = Math.floor(index / 2);
+      let measureCount = index % 2; // 0 or 1 (0 is left, 1 is right)
 
-    const fretElements = notes.map((note) => {
-      let noteX =
-        BASE_X + X_OFFSET * note.beatCount + (width / 2) * measureCount;
+      const fretElements = notes.map((note) => {
+        let noteX =
+          BASE_X + X_OFFSET * note.beatCount + (width / 2) * measureCount;
 
-      let noteY =
-        BASE_Y +
-        note.guitarString * LINE_HEIGHT +
-        lineCount * LINE_HEIGHT * (STRING_COUNT + 1) -
-        2; // StringCount + 1 because there is 1 line after each bar, - 2 to center it
+        let noteY =
+          BASE_Y +
+          note.guitarString * LINE_HEIGHT +
+          lineCount * LINE_HEIGHT * (STRING_COUNT + 1) -
+          2; // StringCount + 1 because there is 1 line after each bar, - 2 to center it
 
-      return (
-        <div
-          key={nextId()}
-          style={{
-            backgroundColor: "var(--background-color)",
-            position: "absolute",
-            left: `${noteX}px`,
-            top: `${noteY}px`,
-          }}
-        >
-          {note.fret}
-        </div>
-      );
-    });
+        return (
+          <div
+            key={nextId()}
+            style={{
+              backgroundColor: "var(--background-color)",
+              position: "absolute",
+              left: `${noteX}px`,
+              top: `${noteY}px`,
+            }}
+          >
+            {note.fret}
+          </div>
+        );
+      });
 
-    return <div key={nextId()}>{fretElements}</div>;
-  });
+      return <div key={nextId()}>{fretElements}</div>;
+    }
+  );
 
   const BASE_M_Y = 127;
   // Lines
-  const measureElements = data.data.map((measure, i) => {
-    // There will be 2 positions for mx
-    let mx = i % 2 === 0 ? 35 : 35 + width / 2;
-    let my = BASE_M_Y + 125 * Math.floor(i / 2);
+  const measureElements = data.instruments[activeInstrument].measures.map(
+    (measure, i) => {
+      // There will be 2 positions for mx
+      let mx = i % 2 === 0 ? 35 : 35 + width / 2;
+      let my = BASE_M_Y + 125 * Math.floor(i / 2);
 
-    return (
-      <div key={nextId()}>
-        {i % 2 === 0 ? <Lines tuning={data.tuning} top={my} /> : null}
-        <div
-          className="measure-line"
-          style={{
-            position: "absolute",
-            top: my + 1 + "px",
-            left: mx + "px",
-            width: "3px",
-            height: "90px",
-          }}
-        />
-      </div>
-    );
-  });
+      return (
+        <div key={nextId()}>
+          {i % 2 === 0 ? <Lines tuning={data.tuning} top={my} /> : null}
+          <div
+            className="measure-line"
+            style={{
+              position: "absolute",
+              top: my + 1 + "px",
+              left: mx + "px",
+              width: "3px",
+              height: "90px",
+            }}
+          />
+        </div>
+      );
+    }
+  );
 
   return (
     <div className="chart-wrapper">

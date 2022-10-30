@@ -5,10 +5,15 @@ export interface noteData {
   type: string;
 }
 
+export interface instrumentData {
+  name: string;
+  measures: noteData[][];
+}
+
 export interface songType {
   name: string;
   artist: string;
   bpm: number;
-  data: noteData[][];
+  instruments: instrumentData[];
   tuning: string[];
 }
