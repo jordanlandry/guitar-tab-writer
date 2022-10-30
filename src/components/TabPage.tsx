@@ -6,12 +6,13 @@ import { song } from "../data/song";
 import Chart from "./Chart";
 import { noteData } from "../data/interfaces";
 import { stairway } from "../data/stairway";
+import mySong from "../data/my_song";
 
 export const SpeedContext = createContext<null | number>(null);
 export default function TabPage() {
   const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-  const [currentSong, setCurrentSong] = useState(stairway);
+  const [currentSong, setCurrentSong] = useState(mySong);
   const [speed, setSpeed] = useState(1); // Number between 0 and 1 (0.5 is half speed)
   const [volume, setVolume] = useState(1); // Number between 0 and 1 (0.5 is half volume)
   const [playing, setPlaying] = useState(false);
