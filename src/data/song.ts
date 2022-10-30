@@ -2,6 +2,7 @@ import { songType } from "./interfaces";
 
 export const song: songType = {
   name: "Never too late",
+  artist: "Three Days Grace",
   bpm: 154,
 
   tuning: ["d2", "a3", "d3", "g3", "b4", "e4"],

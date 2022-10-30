@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from "react";
 import nextId from "react-id-generator";
 import { songType } from "../data/interfaces";
 import Lines from "./Lines";
-import { SpeedContext } from "./TabPage";
 
 type Props = { data: songType };
 
@@ -33,7 +32,7 @@ export default function Chart({ data }: Props) {
             style={{
               backgroundColor: "var(--background-color)",
               position: "absolute",
-              transform: "translateY(12px)",
+              transform: "translateY(-54px)",
               marginTop: "6px",
               fontSize: "1.05rem",
               zIndex: 5,

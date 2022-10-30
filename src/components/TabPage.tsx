@@ -5,13 +5,13 @@ import { song } from "../data/song";
 
 import Chart from "./Chart";
 import { noteData } from "../data/interfaces";
-import { song1 } from "../data/song1";
+import { stairway } from "../data/stairway";
 
 export const SpeedContext = createContext<null | number>(null);
 export default function TabPage() {
   const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-  const [currentSong, setCurrentSong] = useState(test);
+  const [currentSong, setCurrentSong] = useState(stairway);
   const [speed, setSpeed] = useState(1); // Number between 0 and 1 (0.5 is half speed)
   const [volume, setVolume] = useState(1); // Number between 0 and 1 (0.5 is half volume)
   const [playing, setPlaying] = useState(false);
@@ -114,36 +114,49 @@ export default function TabPage() {
 
   return (
     <div className="tab-page">
-      <SpeedContext.Provider value={speed}>
-        <div>{currentSong.name}</div>
-        <div>{currentSong.bpm} BPM</div>
+      <div className="tab-page--header">
+        <div className="tab-page--top">
+          <div className="tab-page--name">{currentSong.name}</div>
+          <div className="tab-page--artist">{currentSong.artist}</div>
+          <div>{currentSong.bpm} BPM</div>
+        </div>
         {playingRef.current ? (
-          <PauseFill onClick={() => setPlaying(false)} />
+          <button onClick={() => setPlaying(false)} className="play-btn">
+            <PauseFill />
+          </button>
         ) : (
-          <PlayFill onClick={playClick} />
+          <button onClick={playClick} className="play-btn">
+            <PlayFill />
+          </button>
         )}
 
         <br />
-        <input
-          type="range"
-          onChange={updateSpeed}
-          value={speed}
-          max={1}
-          min={0.01}
-          step={0.01}
-        />
-        <span>{Math.floor(speed * 100)}% Speed</span>
+        <div className="speed-wrapper">
+          <input
+            type="range"
+            onChange={updateSpeed}
+            value={speed}
+            max={1}
+            min={0.01}
+            step={0.01}
+          />
+          <span>{Math.floor(speed * 100)}% Speed</span>
+        </div>
         <br />
-        <input
-          type="range"
-          onChange={updateVolume}
-          value={volume}
-          max={1}
-          min={0}
-          step={0.01}
-        />
-        <span>{Math.floor(volume * 100)}% Volume</span>
+        <div className="volume-wrapper">
+          <input
+            type="range"
+            onChange={updateVolume}
+            value={volume}
+            max={1}
+            min={0}
+            step={0.01}
+          />
+          <span>{Math.floor(volume * 100)}% Volume</span>
+        </div>
+      </div>
 
+      <SpeedContext.Provider value={speed}>
         <Chart data={currentSong} key={0} />
       </SpeedContext.Provider>
     </div>

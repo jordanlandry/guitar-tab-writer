@@ -7,6 +7,7 @@ export interface noteData {
 
 export interface songType {
   name: string;
+  artist: string;
   bpm: number;
   data: noteData[][];
   tuning: string[];

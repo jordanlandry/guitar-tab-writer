@@ -1,7 +1,8 @@
 import { songType } from "./interfaces";
 
-export const song1: songType = {
+export const song2: songType = {
   name: "Never too late",
+  artist: "Three Days Grace",
   bpm: 100,
 
   tuning: ["e2", "a3", "d3", "g3", "b4", "e4"],
