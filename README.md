@@ -12,6 +12,7 @@ TODO Add the following features
 - Fix sizing : add a max width to the chart so it doesn't look stupid on a big monitor
 - Adjust sizing for mobile users
 - Editible tabs
+- Add bends and slides (probably by using a library to adjust audio pitch and adjusting it over a period of time to create a bend effect, this would also make it so you only need one sound per instrument and can edit it in realtime to create any pitch)
 - Create your own tabs
 - Add more instruments
 - Change BPM at a particular spot
