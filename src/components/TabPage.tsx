@@ -83,15 +83,20 @@ export default function TabPage() {
 
   // Run through the notes
   const playTime = async () => {
+    if (playingRef.current) return; // Don't play if already playing
+
+    setPlaying(true);
+    playingRef.current = true;
+
     for (const measure of currentSong.instruments[activeInstrument].measures) {
       for (let i = 0; i < BEATS_PER_MEASURE; i++) {
         let startTime = Date.now();
 
         // Find the notes that are on this beat
         for (let j = 0; j < BEATS_PER_MEASURE; j++) {
-          if (!playingRef.current) return; // Return here so it fully stops
-
           if (measure[j] && measure[j].beatCount === i) {
+            if (!playingRef.current) return; // Stop playing if playing is false
+
             // Play the note
             const n = getNote(measure[j].fret, measure[j].guitarString);
             play("src/assets/audio/" + n + ".wav");
@@ -117,12 +122,6 @@ export default function TabPage() {
     setVolume(e.target.value);
   };
 
-  const playClick = () => {
-    setPlaying(true);
-  };
-
-  if (playing) playTime();
-
   // Elements
   const instrumentDropdown = currentSong.instruments.map((instrument) => {
     return (
@@ -145,7 +144,7 @@ export default function TabPage() {
             <PauseFill />
           </button>
         ) : (
-          <button onClick={playClick} className="play-btn">
+          <button onClick={playTime} className="play-btn">
             <PlayFill />
           </button>
         )}
