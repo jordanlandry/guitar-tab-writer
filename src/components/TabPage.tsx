@@ -10,7 +10,7 @@ export const HeightContext = createContext<null | number>(null);
 export default function TabPage() {
   const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-  const [currentSong, setCurrentSong] = useState(test);
+  const [currentSong, setCurrentSong] = useState(mySong);
   const [speed, setSpeed] = useState(1); // Number between 0 and 1 (0.5 is half speed)
   const [volume, setVolume] = useState(1); // Number between 0 and 1 (0.5 is half volume)
   const [playing, setPlaying] = useState(false);
@@ -131,6 +131,8 @@ export default function TabPage() {
     );
   });
 
+  console.log(activeInstrument);
+
   return (
     <div className="tab-page" ref={heightRef}>
       <div className="tab-page--header">
@@ -148,7 +150,6 @@ export default function TabPage() {
             <PlayFill />
           </button>
         )}
-
         <br />
         <div className="speed-wrapper">
           <input
@@ -173,7 +174,15 @@ export default function TabPage() {
           />
           <span>{Math.floor(volume * 100)}% Volume</span>
         </div>
-        <select className="instrument-select">{instrumentDropdown}</select>
+
+        <select
+          className="instrument-dropdown"
+          onChange={(e) => {
+            setActiveInstrument(e.target.selectedIndex);
+          }}
+        >
+          {instrumentDropdown}
+        </select>
       </div>
       <HeightContext.Provider value={height}>
         <InstrumentContext.Provider value={activeInstrument}>

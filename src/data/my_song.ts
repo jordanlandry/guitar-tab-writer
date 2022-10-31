@@ -8,7 +8,7 @@ const mySong: songType = {
 
   instruments: [
     {
-      name: "Guitar",
+      name: "Acoustic Lead",
       measures: [
         [
           { guitarString: 5, fret: 15, beatCount: 0, type: "normal" },
@@ -24,6 +24,18 @@ const mySong: songType = {
           { guitarString: 3, fret: 12, beatCount: 10, type: "normal" },
           { guitarString: 4, fret: 13, beatCount: 11, type: "normal" },
           { guitarString: 5, fret: 15, beatCount: 12, type: "normal" },
+        ],
+      ],
+    },
+    {
+      name: "Acoustic Rhythm",
+      measures: [
+        [
+          { guitarString: 1, fret: 3, beatCount: 0, type: "normal" },
+          { guitarString: 2, fret: 4, beatCount: 0, type: "normal" },
+          { guitarString: 3, fret: 5, beatCount: 0, type: "normal" },
+          { guitarString: 4, fret: 5, beatCount: 0, type: "normal" },
+          { guitarString: 5, fret: 3, beatCount: 0, type: "normal" },
         ],
       ],
     },
