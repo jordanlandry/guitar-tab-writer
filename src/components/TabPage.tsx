@@ -37,10 +37,10 @@ export default function TabPage() {
   const activeInstrumentRef = useRef(activeInstrument);
   activeInstrumentRef.current = activeInstrument;
 
-  const play = (a: any) => {
+  const play = (a: string, instrumentIndex: number) => {
     const audio = new Audio();
     audio.src = a;
-    audio.volume = volumeRef.current;
+    audio.volume = volumeRef.current * instrumentIndex === activeInstrumentRef.current ? 1 : 0.75; // If the instrument is active, play at full volume. Otherwise, play at 75% volume
     audio.play();
   };
 
@@ -86,7 +86,7 @@ export default function TabPage() {
 
             const note = getNote(measure[j].fret, measure[j].guitarString);
             let k = measure[j].instrument;
-            play(AUDIO_BASE_PATH + currentSong.instruments[k].sound + "/" + note + ".wav");
+            play(AUDIO_BASE_PATH + currentSong.instruments[k].sound + "/" + note + ".wav", k);
           }
         }
         let finishTime = Date.now();
