@@ -9,36 +9,38 @@ const mySong: songType = {
   instruments: [
     {
       name: "Acoustic Lead",
-      measures: [
-        [
-          { guitarString: 5, fret: 15, beatCount: 0, type: "normal" },
-          { guitarString: 4, fret: 13, beatCount: 1, type: "normal" },
-          { guitarString: 3, fret: 12, beatCount: 2, type: "normal" },
-          { guitarString: 2, fret: 13, beatCount: 3, type: "normal" },
-          { guitarString: 1, fret: 11, beatCount: 4, type: "normal" },
-          { guitarString: 1, fret: 15, beatCount: 5, type: "normal" },
-          { guitarString: 1, fret: 20, beatCount: 6, type: "normal" },
-          { guitarString: 1, fret: 15, beatCount: 7, type: "normal" },
-          { guitarString: 1, fret: 11, beatCount: 8, type: "normal" },
-          { guitarString: 2, fret: 13, beatCount: 9, type: "normal" },
-          { guitarString: 3, fret: 12, beatCount: 10, type: "normal" },
-          { guitarString: 4, fret: 13, beatCount: 11, type: "normal" },
-          { guitarString: 5, fret: 15, beatCount: 12, type: "normal" },
-        ],
-      ],
+      index: 0,
+      sound: "", // Blank for now until we add more sounds, blank will use the default guitar sound
     },
     {
       name: "Acoustic Rhythm",
-      measures: [
-        [
-          { guitarString: 1, fret: 3, beatCount: 0, type: "normal" },
-          { guitarString: 2, fret: 4, beatCount: 0, type: "normal" },
-          { guitarString: 3, fret: 5, beatCount: 0, type: "normal" },
-          { guitarString: 4, fret: 5, beatCount: 0, type: "normal" },
-          { guitarString: 5, fret: 3, beatCount: 0, type: "normal" },
-        ],
-      ],
+      index: 1,
+      sound: "",
     },
+  ],
+  measures: [
+    [
+      { guitarString: 5, fret: 15, beatCount: 0, type: "normal", instrument: 0 },
+      { guitarString: 4, fret: 13, beatCount: 1, type: "normal", instrument: 0 },
+      { guitarString: 3, fret: 12, beatCount: 2, type: "normal", instrument: 0 },
+      { guitarString: 2, fret: 13, beatCount: 3, type: "normal", instrument: 0 },
+      { guitarString: 1, fret: 11, beatCount: 4, type: "normal", instrument: 0 },
+      { guitarString: 1, fret: 15, beatCount: 5, type: "normal", instrument: 0 },
+      { guitarString: 1, fret: 20, beatCount: 6, type: "normal", instrument: 0 },
+      { guitarString: 1, fret: 15, beatCount: 7, type: "normal", instrument: 0 },
+      { guitarString: 1, fret: 11, beatCount: 8, type: "normal", instrument: 0 },
+      { guitarString: 2, fret: 13, beatCount: 9, type: "normal", instrument: 0 },
+      { guitarString: 3, fret: 12, beatCount: 10, type: "normal", instrument: 0 },
+      { guitarString: 4, fret: 13, beatCount: 11, type: "normal", instrument: 0 },
+      { guitarString: 5, fret: 15, beatCount: 12, type: "normal", instrument: 0 },
+
+      { guitarString: 1, fret: 3, beatCount: 0, type: "normal", instrument: 1 },
+      { guitarString: 2, fret: 4, beatCount: 0, type: "normal", instrument: 1 },
+      { guitarString: 3, fret: 5, beatCount: 0, type: "normal", instrument: 1 },
+      { guitarString: 4, fret: 5, beatCount: 0, type: "normal", instrument: 1 },
+      { guitarString: 5, fret: 3, beatCount: 0, type: "normal", instrument: 1 },
+    ],
+    [],
   ],
 };
 

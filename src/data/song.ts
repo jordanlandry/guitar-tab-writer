@@ -13,60 +13,63 @@ export const song: songType = {
 
   instruments: [
     {
-      name: "Guitar",
-      measures: [
-        [
-          { guitarString: 1, fret: 8, beatCount: 0, type: "normal" },
-          { guitarString: 2, fret: 8, beatCount: 8, type: "normal" },
-          { guitarString: 3, fret: 10, beatCount: 12, type: "normal" },
-          { guitarString: 2, fret: 8, beatCount: 20, type: "normal" },
-          { guitarString: 1, fret: 0, beatCount: 24, type: "normal" },
-        ],
-        [
-          { guitarString: 2, fret: 0, beatCount: 4, type: "normal" },
-          { guitarString: 3, fret: 10, beatCount: 8, type: "normal" },
-          { guitarString: 3, fret: 8, beatCount: 16, type: "normal" },
-          { guitarString: 3, fret: 7, beatCount: 24, type: "normal" },
-          { guitarString: 2, fret: 8, beatCount: 28, type: "normal" },
-        ],
-        [
-          { guitarString: 1, fret: 8, beatCount: 0, type: "normal" },
-          { guitarString: 2, fret: 8, beatCount: 8, type: "normal" },
-          { guitarString: 3, fret: 10, beatCount: 12, type: "normal" },
-          { guitarString: 2, fret: 8, beatCount: 20, type: "normal" },
-          { guitarString: 1, fret: 0, beatCount: 24, type: "normal" },
-        ],
-        [
-          { guitarString: 2, fret: 0, beatCount: 4, type: "normal" },
-          { guitarString: 3, fret: 10, beatCount: 8, type: "normal" },
-          { guitarString: 3, fret: 8, beatCount: 16, type: "normal" },
-          { guitarString: 3, fret: 7, beatCount: 24, type: "normal" },
-          { guitarString: 2, fret: 8, beatCount: 28, type: "normal" },
-        ],
-        [
-          { guitarString: 1, fret: 8, beatCount: 0, type: "normal" },
-          { guitarString: 2, fret: 8, beatCount: 8, type: "normal" },
-          { guitarString: 3, fret: 10, beatCount: 12, type: "normal" },
-          { guitarString: 2, fret: 8, beatCount: 20, type: "normal" },
-          { guitarString: 1, fret: 0, beatCount: 24, type: "normal" },
-        ],
-        [
-          { guitarString: 2, fret: 0, beatCount: 4, type: "normal" },
-          { guitarString: 3, fret: 10, beatCount: 8, type: "normal" },
-          { guitarString: 3, fret: 8, beatCount: 16, type: "normal" },
-          { guitarString: 3, fret: 7, beatCount: 24, type: "normal" },
-          { guitarString: 2, fret: 8, beatCount: 28, type: "normal" },
-        ],
-        [
-          { guitarString: 1, fret: 7, beatCount: 0, type: "normal" },
-          { guitarString: 2, fret: 7, beatCount: 8, type: "normal" },
-          { guitarString: 3, fret: 10, beatCount: 12, type: "normal" },
-          { guitarString: 2, fret: 7, beatCount: 20, type: "normal" },
-          { guitarString: 1, fret: 10, beatCount: 24, type: "normal" },
-          { guitarString: 2, fret: 10, beatCount: 24, type: "normal" },
-          { guitarString: 3, fret: 10, beatCount: 24, type: "normal" },
-        ],
-      ],
+      name: "Acoustic Lead",
+      index: 0,
+      sound: "", // Blank for now until we add more sounds, blank will use the default guitar sound
     },
+  ],
+
+  measures: [
+    [
+      { guitarString: 1, fret: 8, beatCount: 0, type: "normal", instrument: 0 },
+      { guitarString: 2, fret: 8, beatCount: 8, type: "normal", instrument: 0 },
+      { guitarString: 3, fret: 10, beatCount: 12, type: "normal", instrument: 0 },
+      { guitarString: 2, fret: 8, beatCount: 20, type: "normal", instrument: 0 },
+      { guitarString: 1, fret: 0, beatCount: 24, type: "normal", instrument: 0 },
+    ],
+    [
+      { guitarString: 2, fret: 0, beatCount: 4, type: "normal", instrument: 0 },
+      { guitarString: 3, fret: 10, beatCount: 8, type: "normal", instrument: 0 },
+      { guitarString: 3, fret: 8, beatCount: 16, type: "normal", instrument: 0 },
+      { guitarString: 3, fret: 7, beatCount: 24, type: "normal", instrument: 0 },
+      { guitarString: 2, fret: 8, beatCount: 28, type: "normal", instrument: 0 },
+    ],
+    [
+      { guitarString: 1, fret: 8, beatCount: 0, type: "normal", instrument: 0 },
+      { guitarString: 2, fret: 8, beatCount: 8, type: "normal", instrument: 0 },
+      { guitarString: 3, fret: 10, beatCount: 12, type: "normal", instrument: 0 },
+      { guitarString: 2, fret: 8, beatCount: 20, type: "normal", instrument: 0 },
+      { guitarString: 1, fret: 0, beatCount: 24, type: "normal", instrument: 0 },
+    ],
+    [
+      { guitarString: 2, fret: 0, beatCount: 4, type: "normal", instrument: 0 },
+      { guitarString: 3, fret: 10, beatCount: 8, type: "normal", instrument: 0 },
+      { guitarString: 3, fret: 8, beatCount: 16, type: "normal", instrument: 0 },
+      { guitarString: 3, fret: 7, beatCount: 24, type: "normal", instrument: 0 },
+      { guitarString: 2, fret: 8, beatCount: 28, type: "normal", instrument: 0 },
+    ],
+    [
+      { guitarString: 1, fret: 8, beatCount: 0, type: "normal", instrument: 0 },
+      { guitarString: 2, fret: 8, beatCount: 8, type: "normal", instrument: 0 },
+      { guitarString: 3, fret: 10, beatCount: 12, type: "normal", instrument: 0 },
+      { guitarString: 2, fret: 8, beatCount: 20, type: "normal", instrument: 0 },
+      { guitarString: 1, fret: 0, beatCount: 24, type: "normal", instrument: 0 },
+    ],
+    [
+      { guitarString: 2, fret: 0, beatCount: 4, type: "normal", instrument: 0 },
+      { guitarString: 3, fret: 10, beatCount: 8, type: "normal", instrument: 0 },
+      { guitarString: 3, fret: 8, beatCount: 16, type: "normal", instrument: 0 },
+      { guitarString: 3, fret: 7, beatCount: 24, type: "normal", instrument: 0 },
+      { guitarString: 2, fret: 8, beatCount: 28, type: "normal", instrument: 0 },
+    ],
+    [
+      { guitarString: 1, fret: 7, beatCount: 0, type: "normal", instrument: 0 },
+      { guitarString: 2, fret: 7, beatCount: 8, type: "normal", instrument: 0 },
+      { guitarString: 3, fret: 10, beatCount: 12, type: "normal", instrument: 0 },
+      { guitarString: 2, fret: 7, beatCount: 20, type: "normal", instrument: 0 },
+      { guitarString: 1, fret: 10, beatCount: 24, type: "normal", instrument: 0 },
+      { guitarString: 2, fret: 10, beatCount: 24, type: "normal", instrument: 0 },
+      { guitarString: 3, fret: 10, beatCount: 24, type: "normal", instrument: 0 },
+    ],
   ],
 };

@@ -3,17 +3,20 @@ export interface noteData {
   fret: number;
   beatCount: number;
   type: string;
+  instrument: number;
 }
 
 export interface instrumentData {
   name: string;
-  measures: noteData[][];
+  index: number;
+  sound: string; // This is the sound file name
 }
 
 export interface songType {
   name: string;
   artist: string;
   bpm: number;
-  instruments: instrumentData[];
+  measures: noteData[][];
   tuning: string[];
+  instruments: instrumentData[];
 }

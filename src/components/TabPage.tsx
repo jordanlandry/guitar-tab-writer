@@ -44,20 +44,7 @@ export default function TabPage() {
     audio.play();
   };
 
-  const NOTE_VALUES = [
-    "ab",
-    "a",
-    "bb",
-    "b",
-    "c",
-    "db",
-    "d",
-    "eb",
-    "e",
-    "f",
-    "gb",
-    "g",
-  ];
+  const NOTE_VALUES = ["ab", "a", "bb", "b", "c", "db", "d", "eb", "e", "f", "gb", "g"];
 
   const getNote = (fret: number, guitarString: number): string => {
     // Get notes index of initial string note, add the stringNumber value,
@@ -80,38 +67,82 @@ export default function TabPage() {
   };
 
   const BEATS_PER_MEASURE = 32;
+  const AUDIO_BASE_PATH = "src/assets/audio/";
 
-  // Run through the notes
-  const playTime = async () => {
+  // const playSong = async () => {
+  //   if (playingRef.current) return; // Don't play if already playing
+  //   setPlaying(true);
+  //   playingRef.current = true;
+
+  //   // Go through each instrument
+  //   for (const instrument of currentSong.instruments) {
+  //     // Go through each measure
+
+  //     for (const measure of instrument.measures) {
+  //       const notesToPlay = [];
+  //       // Find the correct note and play it
+  //       for (let i = 0; i < BEATS_PER_MEASURE; i++) {
+  //         for (let j = 0; j < BEATS_PER_MEASURE; j++) {
+  //           if (measure[i] && measure[i].beatCount === i) notesToPlay.push();
+  //         }
+  //       }
+  //     }
+  //   }
+  // };
+
+  const playSong = async () => {
     if (playingRef.current) return; // Don't play if already playing
 
     setPlaying(true);
     playingRef.current = true;
 
-    for (const measure of currentSong.instruments[activeInstrument].measures) {
-      for (let i = 0; i < BEATS_PER_MEASURE; i++) {
+    // Go through each measure
+    for (const measure of currentSong.measures) {
+      // Find the correct note and play it
+      for (let i = 0; i < measure.length; i++) {
         let startTime = Date.now();
-
-        // Find the notes that are on this beat
-        for (let j = 0; j < BEATS_PER_MEASURE; j++) {
+        for (let j = 0; j < measure.length; j++) {
           if (measure[j] && measure[j].beatCount === i) {
             if (!playingRef.current) return; // Stop playing if playing is false
 
-            // Play the note
-            const n = getNote(measure[j].fret, measure[j].guitarString);
-            play("src/assets/audio/" + n + ".wav");
+            const note = getNote(measure[j].fret, measure[j].guitarString);
+            let k = measure[j].instrument;
+            play(AUDIO_BASE_PATH + currentSong.instruments[k].sound + "/" + note + ".wav");
           }
         }
-        let finishTime = Date.now(); // Get elapsed time in case it takes a while, wait less time
+        let finishTime = Date.now();
 
-        // Wait until the next beat
-        await sleep(
-          ((60 / currentSong.bpm / 32) * 4000 * 1) / speedRef.current -
-            (finishTime - startTime)
-        );
+        await sleep(((60 / currentSong.bpm / BEATS_PER_MEASURE) * 4000) / speedRef.current - (finishTime - startTime));
       }
     }
-    setPlaying(false);
+  };
+
+  // Run through the notes
+  const playTime = async () => {
+    // if (playingRef.current) return; // Don't play if already playing
+    // setPlaying(true);
+    // playingRef.current = true;
+    // for (const measure of currentSong.instruments[activeInstrument].measures) {
+    //   for (let i = 0; i < BEATS_PER_MEASURE; i++) {
+    //     let startTime = Date.now();
+    //     // Find the notes that are on this beat
+    //     for (let j = 0; j < BEATS_PER_MEASURE; j++) {
+    //       if (measure[j] && measure[j].beatCount === i) {
+    //         if (!playingRef.current) return; // Stop playing if playing is false
+    //         // Play the note
+    //         const n = getNote(measure[j].fret, measure[j].guitarString);
+    //         play("src/assets/audio/" + n + ".wav");
+    //       }
+    //     }
+    //     let finishTime = Date.now(); // Get elapsed time in case it takes a while, wait less time
+    //     // Wait until the next beat
+    //     await sleep(
+    //       ((60 / currentSong.bpm / 32) * 4000 * 1) / speedRef.current -
+    //         (finishTime - startTime)
+    //     );
+    //   }
+    // }
+    // setPlaying(false);
   };
 
   const updateSpeed = (e: any) => {
@@ -131,8 +162,6 @@ export default function TabPage() {
     );
   });
 
-  console.log(activeInstrument);
-
   return (
     <div className="tab-page" ref={heightRef}>
       <div className="tab-page--header">
@@ -146,32 +175,18 @@ export default function TabPage() {
             <PauseFill />
           </button>
         ) : (
-          <button onClick={playTime} className="play-btn">
+          <button onClick={playSong} className="play-btn">
             <PlayFill />
           </button>
         )}
         <br />
         <div className="speed-wrapper">
-          <input
-            type="range"
-            onChange={updateSpeed}
-            value={speed}
-            max={1}
-            min={0.01}
-            step={0.01}
-          />
+          <input type="range" onChange={updateSpeed} value={speed} max={1} min={0.01} step={0.01} />
           <span>{Math.floor(speed * 100)}% Speed</span>
         </div>
         <br />
         <div className="volume-wrapper">
-          <input
-            type="range"
-            onChange={updateVolume}
-            value={volume}
-            max={1}
-            min={0}
-            step={0.01}
-          />
+          <input type="range" onChange={updateVolume} value={volume} max={1} min={0} step={0.01} />
           <span>{Math.floor(volume * 100)}% Volume</span>
         </div>
 

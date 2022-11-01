@@ -49,70 +49,61 @@ export default function Chart({ data }: Props) {
   });
 
   // Notes
-  const noteElements = data.instruments[activeInstrument].measures.map(
-    (notes, index) => {
-      let lineCount = Math.floor(index / 2);
-      let measureCount = index % 2; // 0 or 1 (0 is left, 1 is right)
+  const noteElements = data.measures.map((notes, index) => {
+    let lineCount = Math.floor(index / 2);
+    let measureCount = index % 2; // 0 or 1 (0 is left, 1 is right)
 
-      const fretElements = notes.map((note) => {
-        let noteX =
-          BASE_X + X_OFFSET * note.beatCount + (width / 2) * measureCount;
+    const fretElements = notes.map((note) => {
+      let noteX = BASE_X + X_OFFSET * note.beatCount + (width / 2) * measureCount;
 
-        // Need to add height of measure to each note
-        let noteY =
-          BASE_Y +
-          (note.guitarString - 1.5) * LINE_HEIGHT +
-          STRING_COUNT * LINE_HEIGHT * Math.floor(index / 2) +
-          Math.floor(index / 2) * 20; // i * 10 is the margin
+      // Need to add height of measure to each note
+      let noteY =
+        BASE_Y +
+        (note.guitarString - 1.5) * LINE_HEIGHT +
+        STRING_COUNT * LINE_HEIGHT * Math.floor(index / 2) +
+        Math.floor(index / 2) * 20; // i * 10 is the margin
 
-        return (
-          <div
-            key={nextId()}
-            style={{
-              backgroundColor: "var(--background-color)",
-              position: "absolute",
-              left: `${noteX}px`,
-              top: `${noteY}px`,
-            }}
-          >
-            {note.fret}
-          </div>
-        );
-      });
+      // If the note is not the right instrument, don't show it
+      return note.instrument === activeInstrument ? (
+        <div
+          key={nextId()}
+          style={{
+            backgroundColor: "var(--background-color)",
+            position: "absolute",
+            left: `${noteX}px`,
+            top: `${noteY}px`,
+          }}
+        >
+          {note.fret}
+        </div>
+      ) : null;
+    });
 
-      return <div key={nextId()}>{fretElements}</div>;
-    }
-  );
+    return <div key={nextId()}>{fretElements}</div>;
+  });
 
   // Lines
-  const measureElements = data.instruments[activeInstrument].measures.map(
-    (measure, i) => {
-      // There will be 2 positions for mx
-      let mx = i % 2 === 0 ? 35 : 35 + width / 2;
-      let my =
-        topOffset +
-        STRING_COUNT * LINE_HEIGHT * Math.floor(i / 2) +
-        Math.floor(i / 2) * 20; // i * 10 is the margin
+  const measureElements = data.measures.map((measure, i) => {
+    // There will be 2 positions for mx
+    let mx = i % 2 === 0 ? 35 : 35 + width / 2;
+    let my = topOffset + STRING_COUNT * LINE_HEIGHT * Math.floor(i / 2) + Math.floor(i / 2) * 20; // i * 10 is the margin
 
-      return (
-        <div key={nextId()}>
-          {i % 2 === 0 ? (
-            <Lines tuning={data.tuning} top={my} lineHeight={LINE_HEIGHT} />
-          ) : null}
-          <div
-            className="measure-line"
-            style={{
-              position: "absolute",
-              top: my + 1 + "px",
-              left: mx + "px",
-              width: "3px",
-              height: `${(STRING_COUNT - 1) * LINE_HEIGHT}px`,
-            }}
-          />
-        </div>
-      );
-    }
-  );
+    return (
+      <div key={nextId()}>
+        {i % 2 === 0 ? <Lines tuning={data.tuning} top={my} lineHeight={LINE_HEIGHT} /> : null}
+        <div
+          className="measure-line"
+          style={{
+            position: "absolute",
+            top: my + 1 + "px",
+            left: mx + "px",
+            width: "3px",
+            height: `${(STRING_COUNT - 1) * LINE_HEIGHT}px`,
+          }}
+        />
+      </div>
+    );
+  });
 
   return (
     <div className="chart-wrapper">
