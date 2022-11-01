@@ -69,27 +69,6 @@ export default function TabPage() {
   const BEATS_PER_MEASURE = 32;
   const AUDIO_BASE_PATH = "src/assets/audio/";
 
-  // const playSong = async () => {
-  //   if (playingRef.current) return; // Don't play if already playing
-  //   setPlaying(true);
-  //   playingRef.current = true;
-
-  //   // Go through each instrument
-  //   for (const instrument of currentSong.instruments) {
-  //     // Go through each measure
-
-  //     for (const measure of instrument.measures) {
-  //       const notesToPlay = [];
-  //       // Find the correct note and play it
-  //       for (let i = 0; i < BEATS_PER_MEASURE; i++) {
-  //         for (let j = 0; j < BEATS_PER_MEASURE; j++) {
-  //           if (measure[i] && measure[i].beatCount === i) notesToPlay.push();
-  //         }
-  //       }
-  //     }
-  //   }
-  // };
-
   const playSong = async () => {
     if (playingRef.current) return; // Don't play if already playing
 
@@ -115,34 +94,7 @@ export default function TabPage() {
         await sleep(((60 / currentSong.bpm / BEATS_PER_MEASURE) * 4000) / speedRef.current - (finishTime - startTime));
       }
     }
-  };
-
-  // Run through the notes
-  const playTime = async () => {
-    // if (playingRef.current) return; // Don't play if already playing
-    // setPlaying(true);
-    // playingRef.current = true;
-    // for (const measure of currentSong.instruments[activeInstrument].measures) {
-    //   for (let i = 0; i < BEATS_PER_MEASURE; i++) {
-    //     let startTime = Date.now();
-    //     // Find the notes that are on this beat
-    //     for (let j = 0; j < BEATS_PER_MEASURE; j++) {
-    //       if (measure[j] && measure[j].beatCount === i) {
-    //         if (!playingRef.current) return; // Stop playing if playing is false
-    //         // Play the note
-    //         const n = getNote(measure[j].fret, measure[j].guitarString);
-    //         play("src/assets/audio/" + n + ".wav");
-    //       }
-    //     }
-    //     let finishTime = Date.now(); // Get elapsed time in case it takes a while, wait less time
-    //     // Wait until the next beat
-    //     await sleep(
-    //       ((60 / currentSong.bpm / 32) * 4000 * 1) / speedRef.current -
-    //         (finishTime - startTime)
-    //     );
-    //   }
-    // }
-    // setPlaying(false);
+    setPlaying(false);
   };
 
   const updateSpeed = (e: any) => {
