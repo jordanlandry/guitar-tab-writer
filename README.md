@@ -5,7 +5,6 @@ TODO Write this
 Features
 TODO Add the following features
 
-- Multiple instruments playing at the same time
 - Switch the view between different instruments
 - Have the current Instrument play slightly louder than the others
 - Re style
