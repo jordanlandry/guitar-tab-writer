@@ -2,7 +2,9 @@ import { createContext, useEffect, useRef, useState } from "react";
 import { PauseFill, PlayFill } from "react-bootstrap-icons";
 
 import mySong from "../data/my_song";
+import oneSong from "../data/one";
 import { test } from "../data/test";
+import { useLocalStorage } from "../hooks/useLocalStorage";
 import Chart from "./Chart";
 
 export const InstrumentContext = createContext<null | number>(null);
@@ -10,10 +12,13 @@ export const HeightContext = createContext<null | number>(null);
 export default function TabPage() {
   const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-  const [currentSong, setCurrentSong] = useState(mySong);
+  const [currentSong, setCurrentSong] = useState(oneSong);
   const [speed, setSpeed] = useState(1); // Number between 0 and 1 (0.5 is half speed)
   const [volume, setVolume] = useState(1); // Number between 0 and 1 (0.5 is half volume)
   const [playing, setPlaying] = useState(false);
+
+  const [pausePosition, setPausePosition] = useState({ measure: 0, beat: 0 });
+  const [currentPosition, setCurrentPosition] = useState({ measure: 0, beat: 0 });
 
   const [activeInstrument, setActiveInstrument] = useState(0);
 
@@ -37,15 +42,23 @@ export default function TabPage() {
   const activeInstrumentRef = useRef(activeInstrument);
   activeInstrumentRef.current = activeInstrument;
 
+  const pausePositionRef = useRef(pausePosition);
+  pausePositionRef.current = pausePosition;
+
+  const currentPositionRef = useRef(currentPosition);
+  currentPositionRef.current = currentPosition;
+
   const play = (a: string, instrumentIndex: number) => {
     const audio = new Audio();
     audio.src = a;
-    audio.volume = volumeRef.current * instrumentIndex === activeInstrumentRef.current ? 1 : 0.75; // If the instrument is active, play at full volume. Otherwise, play at 75% volume
+
+    if (instrumentIndex === activeInstrumentRef.current) audio.volume = volumeRef.current * 1;
+    else audio.volume = volumeRef.current * 0.75;
+
     audio.play();
   };
 
   const NOTE_VALUES = ["ab", "a", "bb", "b", "c", "db", "d", "eb", "e", "f", "gb", "g"];
-
   const getNote = (fret: number, guitarString: number): string => {
     // Get notes index of initial string note, add the stringNumber value,
     // and get the remainder of it and the number of notes to get the note index,
@@ -69,6 +82,11 @@ export default function TabPage() {
   const BEATS_PER_MEASURE = 32;
   const AUDIO_BASE_PATH = "src/assets/audio/";
 
+  const handlePause = () => {
+    setPlaying(false);
+    setPausePosition({ measure: currentPositionRef.current.measure, beat: currentPositionRef.current.beat });
+  };
+
   const playSong = async () => {
     if (playingRef.current) return; // Don't play if already playing
 
@@ -76,21 +94,32 @@ export default function TabPage() {
     playingRef.current = true;
 
     // Go through each measure
-    for (const measure of currentSong.measures) {
-      // Find the correct note and play it
-      for (let i = 0; i < measure.length; i++) {
+    let startMeasure = pausePositionRef.current.measure ? pausePositionRef.current.measure : 0;
+    for (let m = startMeasure; m < currentSong.measures.length; m++) {
+      const measure = currentSong.measures[m];
+
+      let startBeat = pausePositionRef.current.beat ? pausePositionRef.current.beat : 0;
+      // Go through each beat
+      for (let i = startBeat; i < BEATS_PER_MEASURE; i++) {
         let startTime = Date.now();
+
+        // Find the correct note
         for (let j = 0; j < measure.length; j++) {
           if (measure[j] && measure[j].beatCount === i) {
             if (!playingRef.current) return; // Stop playing if playing is false
+
+            // Reset the pause position so it doesn't start from the pause position next time
+            setPausePosition({ measure: 0, beat: 0 });
+            // Update current position
+            setCurrentPosition({ measure: m, beat: i });
 
             const note = getNote(measure[j].fret, measure[j].guitarString);
             let k = measure[j].instrument;
             play(AUDIO_BASE_PATH + currentSong.instruments[k].sound + "/" + note + ".wav", k);
           }
         }
-        let finishTime = Date.now();
 
+        let finishTime = Date.now();
         await sleep(((60 / currentSong.bpm / BEATS_PER_MEASURE) * 4000) / speedRef.current - (finishTime - startTime));
       }
     }
@@ -123,7 +152,7 @@ export default function TabPage() {
           <div>{currentSong.bpm} BPM</div>
         </div>
         {playingRef.current ? (
-          <button onClick={() => setPlaying(false)} className="play-btn">
+          <button onClick={handlePause} className="play-btn">
             <PauseFill />
           </button>
         ) : (

@@ -5,8 +5,6 @@ TODO Write this
 Features
 TODO Add the following features
 
-- Switch the view between different instruments
-- Have the current Instrument play slightly louder than the others
 - Re style
 - Fix sizing : add a max width to the chart so it doesn't look stupid on a big monitor
 - Adjust sizing for mobile users
