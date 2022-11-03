@@ -48,6 +48,7 @@ export default function TabPage() {
   const currentPositionRef = useRef(currentPosition);
   currentPositionRef.current = currentPosition;
 
+  // Play functions
   const play = (a: string, instrumentIndex: number) => {
     const audio = new Audio();
     audio.src = a;
@@ -110,6 +111,7 @@ export default function TabPage() {
 
             // Reset the pause position so it doesn't start from the pause position next time
             setPausePosition({ measure: 0, beat: 0 });
+
             // Update current position
             setCurrentPosition({ measure: m, beat: i });
 

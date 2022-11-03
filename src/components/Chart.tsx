@@ -7,16 +7,29 @@ import { HeightContext, InstrumentContext } from "./TabPage";
 type Props = { data: songType };
 
 export default function Chart({ data }: Props) {
-  const [width, setWidth] = useState(window.innerWidth);
+  const MAX_PIXEL_WIDTH = 1500;
+  const MAX_WIDTH = Math.min(window.innerWidth * 0.9, MAX_PIXEL_WIDTH);
+  const [width, setWidth] = useState(Math.min(window.innerWidth, MAX_WIDTH));
   const activeInstrument = useContext(InstrumentContext)!;
 
   const topOffset = useContext(HeightContext)!;
 
-  // Update the width when the window is resized
+  // Update the width when the window is resized with max width
   useEffect(() => {
-    const handleResize = () => setWidth(window.innerWidth);
+    const handleResize = () => {
+      setWidth(Math.min(window.innerWidth * 0.9, MAX_PIXEL_WIDTH));
+    };
     window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    window.addEventListener("orientationchange", handleResize);
+    window.addEventListener("load", handleResize);
+    window.addEventListener("onfullscreenchange", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("orientationchange", handleResize);
+      window.removeEventListener("load", handleResize);
+      window.removeEventListener("onfullscreenchange", handleResize);
+    };
   }, []);
 
   // Note properties for sizing and positioning
@@ -25,9 +38,10 @@ export default function Chart({ data }: Props) {
   const BASE_X = 45;
   const BASE_Y = topOffset;
   const X_OFFSET = width / 64;
+  const CENTER_OFFSET = (window.innerWidth - width) / 2;
 
   // Show the tuning
-  const dataElements = data.tuning.map((note, i) => {
+  const tuningElements = data.tuning.map((note, i) => {
     return (
       <span key={nextId()}>
         <div className="uppercase">
@@ -38,6 +52,7 @@ export default function Chart({ data }: Props) {
               position: "absolute",
               top: BASE_Y + LINE_HEIGHT * (i - 0.5) + "px",
               zIndex: 5,
+              left: CENTER_OFFSET,
             }}
           >
             {note.length === 2 ? note[0] : `${note[0]}${note[1]}`}
@@ -54,7 +69,7 @@ export default function Chart({ data }: Props) {
     let measureCount = index % 2; // 0 or 1 (0 is left, 1 is right)
 
     const fretElements = notes.map((note) => {
-      let noteX = BASE_X + X_OFFSET * note.beatCount + (width / 2) * measureCount;
+      let noteX = BASE_X + X_OFFSET * note.beatCount + (width / 2) * measureCount + CENTER_OFFSET;
 
       // Need to add height of measure to each note
       let noteY =
@@ -90,13 +105,15 @@ export default function Chart({ data }: Props) {
 
     return (
       <div key={nextId()}>
-        {i % 2 === 0 ? <Lines tuning={data.tuning} top={my} lineHeight={LINE_HEIGHT} /> : null}
+        {i % 2 === 0 ? (
+          <Lines tuning={data.tuning} top={my} lineHeight={LINE_HEIGHT} maxWidth={MAX_WIDTH} width={width} />
+        ) : null}
         <div
           className="measure-line"
           style={{
             position: "absolute",
             top: my + 1 + "px",
-            left: mx + "px",
+            left: mx + CENTER_OFFSET + "px",
             width: "3px",
             height: `${(STRING_COUNT - 1) * LINE_HEIGHT}px`,
           }}
@@ -107,7 +124,7 @@ export default function Chart({ data }: Props) {
 
   return (
     <div className="chart-wrapper">
-      {dataElements}
+      {tuningElements}
       {measureElements}
       {noteElements}
     </div>
