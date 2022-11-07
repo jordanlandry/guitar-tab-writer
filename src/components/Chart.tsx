@@ -5,9 +5,9 @@ import oneSong from "../data/one";
 import Lines from "./Lines";
 import { HeightContext, InstrumentContext } from "./TabPage";
 
-type Props = { data: songType; setPausePosition: any; setCurrentPosition: any };
+type Props = { data: songType; setPausePosition: any; setCurrentPosition: any; play: any; getNote: any };
 
-export default function Chart({ data }: Props) {
+export default function Chart({ data, setPausePosition, setCurrentPosition, play, getNote }: Props) {
   const MAX_PIXEL_WIDTH = 1500;
   const MAX_WIDTH = Math.min(window.innerWidth * 0.9, MAX_PIXEL_WIDTH);
   const [width, setWidth] = useState(Math.min(window.innerWidth, MAX_WIDTH));
@@ -39,6 +39,53 @@ export default function Chart({ data }: Props) {
       window.removeEventListener("load", handleResize);
       window.removeEventListener("onfullscreenchange", handleResize);
     };
+  }, []);
+
+  // keyboard event listener
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      const { measureIndex, noteIndex } = selectedNoteRef.current;
+      if (event.key === "Escape") setSelectedNote({ measureIndex: -1, noteIndex: -1 }); // Deselect note
+
+      // change fret of note on keyboard input
+      if (measureIndex !== -1 && noteIndex !== -1) {
+        const note = data.measures[measureIndex][noteIndex];
+
+        if (event.key === "ArrowUp") {
+          event.preventDefault();
+          if (event.shiftKey) note.guitarString--;
+          else note.fret++;
+        } else if (event.key === "ArrowDown") {
+          event.preventDefault();
+          if (event.shiftKey) note.guitarString++;
+          else note.fret = Math.max(0, note.fret - 1);
+        } else if (event.key === "ArrowLeft") {
+          event.preventDefault();
+          note.beatCount = Math.max(0, note.beatCount - 1);
+        } else if (event.key === "ArrowRight") {
+          event.preventDefault();
+          note.beatCount++;
+        }
+
+        // Play the note if the user presses space
+        if (event.key === "Space") {
+          const newNote = getNote(note.fret, note.guitarString);
+          if (newNote) play(newNote, note.instrument);
+        }
+
+        // Play the new note if the user updated the fret or string
+        if (event.key === "ArrowUp" || event.key === "ArrowDown") {
+          const newNote = getNote(note.fret, note.guitarString);
+          if (newNote) play(newNote, note.instrument);
+        }
+
+        // Force a re-render
+        setCount((prevCount) => prevCount + 1);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
   // Note properties for sizing and positioning
@@ -79,42 +126,6 @@ export default function Chart({ data }: Props) {
     const note = document.getElementById(id);
     if (note) note.className = "note selected";
   };
-
-  // keyboard event listener
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      const { measureIndex, noteIndex } = selectedNoteRef.current;
-      if (event.key === "Escape") setSelectedNote({ measureIndex: -1, noteIndex: -1 }); // Deselect note
-
-      // change fret of note on keyboard input
-      if (measureIndex !== -1 && noteIndex !== -1) {
-        const note = data.measures[measureIndex][noteIndex];
-
-        if (event.key === "ArrowUp") {
-          event.preventDefault();
-          if (event.shiftKey) note.guitarString--;
-          else note.fret++;
-        } else if (event.key === "ArrowDown") {
-          event.preventDefault();
-
-          if (event.shiftKey) note.guitarString++;
-          else note.fret--;
-        } else if (event.key === "ArrowLeft") {
-          event.preventDefault();
-          note.beatCount--;
-        } else if (event.key === "ArrowRight") {
-          event.preventDefault();
-          note.beatCount++;
-        }
-
-        // Force a re-render
-        setCount((prevCount) => prevCount + 1);
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
 
   // Notes
   const noteElements = data.measures.map((notes, index) => {
@@ -161,7 +172,13 @@ export default function Chart({ data }: Props) {
     let my = topOffset + STRING_COUNT * LINE_HEIGHT * Math.floor(i / 2) + Math.floor(i / 2) * 20; // i * 10 is the margin
 
     return (
-      <div key={nextId()}>
+      <div
+        key={nextId()}
+        style={{ width: `${width / 2}px` }}
+        onClick={() => {
+          setPausePosition({ measure: i, beat: 0 });
+        }}
+      >
         {i % 2 === 0 ? (
           <Lines tuning={data.tuning} top={my} lineHeight={LINE_HEIGHT} maxWidth={MAX_WIDTH} width={width} />
         ) : null}

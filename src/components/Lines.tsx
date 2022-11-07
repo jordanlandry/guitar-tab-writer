@@ -10,6 +10,7 @@ export default function Lines({ tuning, top, lineHeight, maxWidth, width }: Prop
         className="line"
         style={{
           position: "absolute",
+          marginBottom: `${lineHeight}px`,
           top: top + 1 + i * lineHeight + "px",
           maxWidth: maxWidth,
           left: (window.innerWidth - width) / 2,

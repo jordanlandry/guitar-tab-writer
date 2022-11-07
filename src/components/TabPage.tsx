@@ -48,10 +48,15 @@ export default function TabPage() {
   const currentPositionRef = useRef(currentPosition);
   currentPositionRef.current = currentPosition;
 
+  // Constants
+  const BEATS_PER_MEASURE = 32;
+  const AUDIO_BASE_PATH = "src/assets/audio/";
+  const AUDIO_FILE_EXTENSION = ".wav";
+
   // Play functions
-  const play = (a: string, instrumentIndex: number) => {
+  const play = (note: string, instrumentIndex: number) => {
     const audio = new Audio();
-    audio.src = a;
+    audio.src = AUDIO_BASE_PATH + currentSong.instruments[instrumentIndex].sound + note + AUDIO_FILE_EXTENSION;
 
     if (instrumentIndex === activeInstrumentRef.current) audio.volume = volumeRef.current * 1;
     else audio.volume = volumeRef.current * 0.75;
@@ -79,9 +84,6 @@ export default function TabPage() {
 
     return NOTE_VALUES[i % NOTE_VALUES.length] + o;
   };
-
-  const BEATS_PER_MEASURE = 32;
-  const AUDIO_BASE_PATH = "src/assets/audio/";
 
   const handlePause = () => {
     setPlaying(false);
@@ -117,7 +119,7 @@ export default function TabPage() {
 
             const note = getNote(measure[j].fret, measure[j].guitarString);
             let k = measure[j].instrument;
-            play(AUDIO_BASE_PATH + currentSong.instruments[k].sound + "/" + note + ".wav", k);
+            play(note, k);
           }
         }
 
@@ -182,9 +184,12 @@ export default function TabPage() {
           {instrumentDropdown}
         </select>
       </div>
+
       <HeightContext.Provider value={height}>
         <InstrumentContext.Provider value={activeInstrument}>
           <Chart
+            play={play}
+            getNote={getNote}
             data={currentSong}
             key={0}
             setPausePosition={setPausePosition}
