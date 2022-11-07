@@ -118,3 +118,32 @@ body {
   align-items: center;
   top: 25px;
 }
+
+.selected {
+  background-color: rgba(100, 100, 255, 0.5);
+  outline: 1px solid black;
+}
+
+.note {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  width: 20px;
+  height: 20px;
+
+  background-color: var(--background-color);
+  transition: 0.2s;
+
+  cursor: text;
+}
+
+.note:hover {
+  background-color: rgb(150, 150, 255);
+  outline: 1px solid black;
+}
+
+.selected {
+  background-color: rgba(150, 150, 255, 1);
+  outline: 1px solid black;
+}

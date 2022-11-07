@@ -184,7 +184,12 @@ export default function TabPage() {
       </div>
       <HeightContext.Provider value={height}>
         <InstrumentContext.Provider value={activeInstrument}>
-          <Chart data={currentSong} key={0} />
+          <Chart
+            data={currentSong}
+            key={0}
+            setPausePosition={setPausePosition}
+            setCurrentPosition={setCurrentPosition}
+          />
         </InstrumentContext.Provider>
       </HeightContext.Provider>
     </div>

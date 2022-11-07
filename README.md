@@ -2,13 +2,27 @@
 
 TODO Write this
 
+## Controls
+
+| Button              | Action                                         |
+| ------------------- | ---------------------------------------------- |
+| Left Click          | Select note                                    |
+| Arrow Up            | Increase fret on selected note                 |
+| Arrow Down          | Decrease fret on selected note                 |
+| Arrow Left          | Set beat of selected note to previous          |
+| Arrow Right         | Set beat of selected note to next              |
+| Shift + Arrow Up    | Change string of selected note to above string |
+| Shift + Arrow Down  | Change string of selected note to below string |
+| Delete \| Backspace | Remove selected note (Not yet implemented)     |
+| Ctrl+Z              | Undo last change (Not yet implemented)         |
+
 Features
 TODO Add the following features
 
 - Re style
-- Fix sizing : add a max width to the chart so it doesn't look stupid on a big monitor
 - Adjust sizing for mobile users
 - Editible tabs
+- Add progress line that runs through the tab (hovers over the note that its playing)
 - Add bends and slides (probably by using a library to adjust audio pitch and adjusting it over a period of time to create a bend effect, this would also make it so you only need one sound per instrument and can edit it in realtime to create any pitch)
 - Create your own tabs
 - Add more instruments

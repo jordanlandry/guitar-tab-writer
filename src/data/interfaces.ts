@@ -1,4 +1,5 @@
 export interface noteData {
+  id: string;
   guitarString: number;
   fret: number;
   beatCount: number;
