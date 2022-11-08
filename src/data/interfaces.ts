@@ -21,3 +21,8 @@ export interface songType {
   tuning: string[];
   instruments: instrumentData[];
 }
+
+export interface userType {
+  name: string;
+  songs: songType[];
+}

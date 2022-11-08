@@ -134,7 +134,7 @@ body {
   background-color: var(--background-color);
   transition: 0.2s;
 
-  cursor: text;
+  cursor: pointer;
 }
 
 .note:hover {

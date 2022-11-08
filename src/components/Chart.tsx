@@ -41,6 +41,62 @@ export default function Chart({ data, setPausePosition, setCurrentPosition, play
     };
   }, []);
 
+  const KEYBINDS: any = {
+    Space: () => play(getNote(), activeInstrument),
+    Escape: () => setSelectedNote({ measureIndex: -1, noteIndex: -1 }),
+    ArrowUp: (note: any) => note.fret++,
+    ArrowDown: (note: any) => (note.fret = Math.max(0, note.fret - 1)),
+    ArrowLeft: (note: any) => (note.beatCount = Math.max(0, note.beatCount - 1)),
+    ArrowRight: (note: any) => (note.beatCount = Math.min(32, note.beatCount + 1)), // 32 is the current max beat count will change to be dynamic
+  };
+
+  const SHIFT_KEYBINDS: any = {
+    ArrowUp: (note: any) => (note.guitarString = Math.max(1, note.guitarString - 1)),
+    ArrowDown: (note: any) => (note.guitarString = Math.min(data.tuning.length, note.guitarString + 1)),
+  };
+
+  const CTRL_KEYBINDS: any = {
+    ArrowLeft: (note: any) => {
+      // Go to previous note
+      // Find note with most previous beatcount
+      for (let i = 1; i < 32; i++) {
+        const note = data.measures[selectedNoteRef.current.measureIndex].find((note: any) => {
+          return (
+            note.beatCount ===
+            data.measures[selectedNoteRef.current.measureIndex][selectedNoteRef.current.noteIndex].beatCount - i
+          );
+        });
+
+        if (note) {
+          setSelectedNote({
+            measureIndex: selectedNoteRef.current.measureIndex,
+            noteIndex: data.measures[selectedNoteRef.current.measureIndex].indexOf(note),
+          });
+          break;
+        }
+      }
+    },
+    ArrowRight: (note: any) => {
+      // Go to next note
+      // Find note with most previous beatcount
+      for (let i = 1; i < 32; i++) {
+        const note = data.measures[selectedNoteRef.current.measureIndex].find((note: any) => {
+          return (
+            note.beatCount ===
+            data.measures[selectedNoteRef.current.measureIndex][selectedNoteRef.current.noteIndex].beatCount + i
+          );
+        });
+        if (note) {
+          setSelectedNote({
+            measureIndex: selectedNoteRef.current.measureIndex,
+            noteIndex: data.measures[selectedNoteRef.current.measureIndex].indexOf(note),
+          });
+          break;
+        }
+      }
+    },
+  };
+
   // keyboard event listener
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -51,21 +107,9 @@ export default function Chart({ data, setPausePosition, setCurrentPosition, play
       if (measureIndex !== -1 && noteIndex !== -1) {
         const note = data.measures[measureIndex][noteIndex];
 
-        if (event.key === "ArrowUp") {
-          event.preventDefault();
-          if (event.shiftKey) note.guitarString--;
-          else note.fret++;
-        } else if (event.key === "ArrowDown") {
-          event.preventDefault();
-          if (event.shiftKey) note.guitarString++;
-          else note.fret = Math.max(0, note.fret - 1);
-        } else if (event.key === "ArrowLeft") {
-          event.preventDefault();
-          note.beatCount = Math.max(0, note.beatCount - 1);
-        } else if (event.key === "ArrowRight") {
-          event.preventDefault();
-          note.beatCount++;
-        }
+        if (event.shiftKey && SHIFT_KEYBINDS[event.key]) SHIFT_KEYBINDS[event.key](note);
+        else if (event.ctrlKey && CTRL_KEYBINDS[event.key]) CTRL_KEYBINDS[event.key](note);
+        else if (KEYBINDS[event.key]) KEYBINDS[event.key](note);
 
         // Play the note if the user presses space
         if (event.key === "Enter") {

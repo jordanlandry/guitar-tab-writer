@@ -13,6 +13,8 @@ TODO Write this
 | Arrow Right         | Set beat of selected note to next              |
 | Shift + Arrow Up    | Change string of selected note to above string |
 | Shift + Arrow Down  | Change string of selected note to below string |
+| Ctrl + Arrow Right  | Select next note                               |
+| Ctrl + Arrow Left   | Select previous note                           |
 | Enter               | Play selected note                             |
 | Delete \| Backspace | Remove selected note (Not yet implemented)     |
 | Ctrl+Z              | Undo last change (Not yet implemented)         |
