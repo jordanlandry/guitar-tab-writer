@@ -55,6 +55,7 @@ export default function TopPane({
           <PlayFill />
         </button>
       )}
+
       <br />
       <div className="speed-wrapper">
         <input type="range" onChange={updateSpeed} value={speed} max={1} min={0.01} step={0.01} />

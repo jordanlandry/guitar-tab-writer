@@ -2,7 +2,7 @@ import { useContext, useEffect, useRef, useState } from "react";
 import nextId from "react-id-generator";
 import { songType } from "../data/interfaces";
 import oneSong from "../data/one";
-import Lines from "./Lines";
+import Line from "./Line";
 import { HeightContext, InstrumentContext } from "./TabPage";
 
 type Props = { data: songType; setPausePosition: any; setCurrentPosition: any; play: any; getNote: any };
@@ -92,7 +92,7 @@ export default function Chart({ data, setPausePosition, setCurrentPosition, play
   const STRING_COUNT = data.tuning.length;
   const LINE_HEIGHT = 15;
   const BASE_X = 45;
-  const BASE_Y = topOffset;
+  const BASE_Y = topOffset + 13;
   const X_OFFSET = width / 64;
   const CENTER_OFFSET = (window.innerWidth - width) / 2;
 
@@ -106,7 +106,7 @@ export default function Chart({ data, setPausePosition, setCurrentPosition, play
             style={{
               backgroundColor: "var(--background-color)",
               position: "absolute",
-              top: BASE_Y + LINE_HEIGHT * (i - 0.5) + "px",
+              top: BASE_Y + LINE_HEIGHT * i + "px",
               zIndex: 5,
               left: CENTER_OFFSET,
             }}
@@ -165,41 +165,17 @@ export default function Chart({ data, setPausePosition, setCurrentPosition, play
     return <div key={nextId()}>{fretElements}</div>;
   });
 
-  // Lines
-  const measureElements = data.measures.map((measure, i) => {
-    // There will be 2 unique positions for mx
-    let mx = i % 2 === 0 ? 35 : 35 + width / 2;
-    let my = topOffset + STRING_COUNT * LINE_HEIGHT * Math.floor(i / 2) + Math.floor(i / 2) * 20; // i * 10 is the margin
-
-    return (
-      <div
-        key={nextId()}
-        style={{ width: `${width / 2}px` }}
-        onClick={() => {
-          setPausePosition({ measure: i, beat: 0 });
-        }}
-      >
-        {i % 2 === 0 ? (
-          <Lines tuning={data.tuning} top={my} lineHeight={LINE_HEIGHT} maxWidth={MAX_WIDTH} width={width} />
-        ) : null}
-        <div
-          className="measure-line"
-          style={{
-            position: "absolute",
-            top: my + 1 + "px",
-            left: mx + CENTER_OFFSET + "px",
-            width: "3px",
-            height: `${(STRING_COUNT - 1) * LINE_HEIGHT}px`,
-          }}
-        />
-      </div>
-    );
+  const lineElements = data.measures.map((measure, i) => {
+    // Need a left and a right
+    return <Line key={nextId()} tuning={data.tuning} lineHeight={LINE_HEIGHT} maxWidth={width} />;
   });
 
   return (
     <div className="chart-wrapper">
-      {tuningElements}
-      {measureElements}
+      {/* {tuningElements} */}
+      <div className="line-grid" style={{ maxWidth: MAX_WIDTH, margin: "auto" }}>
+        {lineElements}
+      </div>
       {noteElements}
     </div>
   );

@@ -15,7 +15,7 @@ export const HeightContext = createContext<null | number>(null);
 export default function TabPage() {
   const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-  const [currentSong, setCurrentSong] = useState(blankSong);
+  const [currentSong, setCurrentSong] = useState(oneSong);
   const [speed, setSpeed] = useState(1); // Number between 0 and 1 (0.5 is half speed)
   const [volume, setVolume] = useState(1); // Number between 0 and 1 (0.5 is half volume)
   const [playing, setPlaying] = useState(false);
@@ -155,22 +155,24 @@ export default function TabPage() {
   };
 
   return (
-    <div className="tab-page" ref={heightRef}>
-      <TopPane
-        songName={songName}
-        setSongName={setSongName}
-        songArtist={songArtist}
-        setSongArtist={setSongArtist}
-        playingRef={playingRef}
-        playSong={playSong}
-        handlePause={handlePause}
-        speed={speed}
-        updateSpeed={updateSpeed}
-        volume={volume}
-        updateVolume={updateVolume}
-        setActiveInstrument={setActiveInstrument}
-        currentSong={currentSong}
-      />
+    <div className="tab-page">
+      <div ref={heightRef}>
+        <TopPane
+          songName={songName}
+          setSongName={setSongName}
+          songArtist={songArtist}
+          setSongArtist={setSongArtist}
+          playingRef={playingRef}
+          playSong={playSong}
+          handlePause={handlePause}
+          speed={speed}
+          updateSpeed={updateSpeed}
+          volume={volume}
+          updateVolume={updateVolume}
+          setActiveInstrument={setActiveInstrument}
+          currentSong={currentSong}
+        />
+      </div>
 
       <HeightContext.Provider value={height}>
         <InstrumentContext.Provider value={activeInstrument}>
