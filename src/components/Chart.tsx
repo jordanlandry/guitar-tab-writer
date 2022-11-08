@@ -63,7 +63,8 @@ export default function Chart({ data, setPausePosition, setCurrentPosition, play
         const note = data.measures[selectedNoteRef.current.measureIndex].find((note: any) => {
           return (
             note.beatCount ===
-            data.measures[selectedNoteRef.current.measureIndex][selectedNoteRef.current.noteIndex].beatCount - i
+              data.measures[selectedNoteRef.current.measureIndex][selectedNoteRef.current.noteIndex].beatCount - i &&
+            note.instrument === activeInstrument
           );
         });
 
@@ -83,7 +84,8 @@ export default function Chart({ data, setPausePosition, setCurrentPosition, play
         const note = data.measures[selectedNoteRef.current.measureIndex].find((note: any) => {
           return (
             note.beatCount ===
-            data.measures[selectedNoteRef.current.measureIndex][selectedNoteRef.current.noteIndex].beatCount + i
+              data.measures[selectedNoteRef.current.measureIndex][selectedNoteRef.current.noteIndex].beatCount + i &&
+            note.instrument === activeInstrument
           );
         });
         if (note) {
@@ -103,6 +105,7 @@ export default function Chart({ data, setPausePosition, setCurrentPosition, play
       const { measureIndex, noteIndex } = selectedNoteRef.current;
       if (event.key === "Escape") setSelectedNote({ measureIndex: -1, noteIndex: -1 }); // Deselect note
 
+      event.preventDefault();
       // change fret of note on keyboard input
       if (measureIndex !== -1 && noteIndex !== -1) {
         const note = data.measures[measureIndex][noteIndex];
@@ -111,17 +114,14 @@ export default function Chart({ data, setPausePosition, setCurrentPosition, play
         else if (event.ctrlKey && CTRL_KEYBINDS[event.key]) CTRL_KEYBINDS[event.key](note);
         else if (KEYBINDS[event.key]) KEYBINDS[event.key](note);
 
-        // Play the note if the user presses space
-        if (event.key === "Enter") {
-          const newNote = getNote(note.fret, note.guitarString);
-          if (newNote) play(newNote, note.instrument);
-        }
-
-        // Play the new note if the user updated the fret or string
-        if (event.key === "ArrowUp" || event.key === "ArrowDown") {
-          const newNote = getNote(note.fret, note.guitarString);
-          if (newNote) play(newNote, note.instrument);
-        }
+        // Play the note if user changed note
+        if (
+          event.key === "ArrowUp" ||
+          event.key === "ArrowDown" ||
+          (event.key === "ArrowLeft" && event.ctrlKey) ||
+          (event.key === "ArrowRight" && event.ctrlKey)
+        )
+          play(getNote(note.fret, note.guitarString), activeInstrument);
 
         // Force a re-render
         setCount((prevCount) => prevCount + 1);
