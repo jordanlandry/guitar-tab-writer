@@ -148,14 +148,11 @@ export default function TabPage() {
     setVolume(e.target.value);
   };
 
-  // Elements
-  const instrumentDropdown = currentSong.instruments.map((instrument) => {
-    return (
-      <option value={instrument.name} key={instrument.name}>
-        {instrument.name}
-      </option>
-    );
-  });
+  const handleNewMeasure = () => {
+    const newSong = { ...currentSong };
+    newSong.measures.push([]);
+    setCurrentSong(newSong);
+  };
 
   return (
     <div className="tab-page" ref={heightRef}>
@@ -187,6 +184,10 @@ export default function TabPage() {
           />
         </InstrumentContext.Provider>
       </HeightContext.Provider>
+
+      <button className="new-button" onClick={handleNewMeasure}>
+        +
+      </button>
     </div>
   );
 }
