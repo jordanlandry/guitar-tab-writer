@@ -147,3 +147,29 @@ body {
   background-color: rgba(150, 150, 255, 1);
   outline: 1px solid black;
 }
+
+.changeable-text {
+  text-align: center;
+  font-size: inherit;
+  color: inherit;
+  font-weight: inherit;
+  width: auto;
+  margin: auto;
+  padding: 0;
+  background-color: transparent;
+  border: none;
+  font-family: inherit;
+}
+
+.changeable-value {
+  width: fit-content;
+  margin: auto;
+}
+
+.changeable-value:hover {
+  outline: 1px solid black;
+}
+
+.value--empty {
+  color: rgb(100, 100, 100);
+}

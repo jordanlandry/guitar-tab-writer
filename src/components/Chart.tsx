@@ -68,7 +68,7 @@ export default function Chart({ data, setPausePosition, setCurrentPosition, play
         }
 
         // Play the note if the user presses space
-        if (event.key === "Space") {
+        if (event.key === "Enter") {
           const newNote = getNote(note.fret, note.guitarString);
           if (newNote) play(newNote, note.instrument);
         }

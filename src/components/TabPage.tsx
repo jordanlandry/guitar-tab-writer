@@ -1,10 +1,12 @@
 import { createContext, useEffect, useRef, useState } from "react";
 import { PauseFill, PlayFill } from "react-bootstrap-icons";
+import blankSong from "../data/blankSong";
 
 import mySong from "../data/my_song";
 import oneSong from "../data/one";
 import { test } from "../data/test";
 import { useLocalStorage } from "../hooks/useLocalStorage";
+import ChangeableText from "./ChangeableText";
 import Chart from "./Chart";
 
 export const InstrumentContext = createContext<null | number>(null);
@@ -12,7 +14,7 @@ export const HeightContext = createContext<null | number>(null);
 export default function TabPage() {
   const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-  const [currentSong, setCurrentSong] = useState(oneSong);
+  const [currentSong, setCurrentSong] = useState(blankSong);
   const [speed, setSpeed] = useState(1); // Number between 0 and 1 (0.5 is half speed)
   const [volume, setVolume] = useState(1); // Number between 0 and 1 (0.5 is half volume)
   const [playing, setPlaying] = useState(false);
@@ -28,6 +30,10 @@ export default function TabPage() {
   useEffect(() => {
     setHeight(heightRef.current?.clientHeight || 0);
   });
+
+  const [songName, setSongName] = useLocalStorage("songName", currentSong.name);
+  const [songArtist, setSongArtist] = useLocalStorage("songArtist", currentSong.artist);
+  const [songBPM, setSongBPM] = useLocalStorage("songBPM", currentSong.bpm);
 
   // Refs
   const playingRef = useRef(playing);
@@ -108,6 +114,7 @@ export default function TabPage() {
 
         // Find the correct note
         for (let j = 0; j < measure.length; j++) {
+          //@ts-ignore
           if (measure[j] && measure[j].beatCount === i) {
             if (!playingRef.current) return; // Stop playing if playing is false
 
@@ -117,7 +124,9 @@ export default function TabPage() {
             // Update current position
             setCurrentPosition({ measure: m, beat: i });
 
+            //@ts-ignore
             const note = getNote(measure[j].fret, measure[j].guitarString);
+            //@ts-ignore
             let k = measure[j].instrument;
             play(note, k);
           }
@@ -151,8 +160,13 @@ export default function TabPage() {
     <div className="tab-page" ref={heightRef}>
       <div className="tab-page--header">
         <div className="tab-page--top">
-          <div className="tab-page--name">{currentSong.name}</div>
-          <div className="tab-page--artist">{currentSong.artist}</div>
+          <div className="tab-page--name">
+            <ChangeableText value={songName} setValue={setSongName} />
+          </div>
+          <div className="tab-page--artist">
+            <ChangeableText value={songArtist} setValue={setSongArtist} />
+          </div>
+
           <div>{currentSong.bpm} BPM</div>
         </div>
         {playingRef.current ? (
