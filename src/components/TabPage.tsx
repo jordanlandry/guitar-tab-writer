@@ -8,6 +8,7 @@ import { test } from "../data/test";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import ChangeableText from "./ChangeableText";
 import Chart from "./Chart";
+import TopPane from "./TopPane";
 
 export const InstrumentContext = createContext<null | number>(null);
 export const HeightContext = createContext<null | number>(null);
@@ -158,46 +159,21 @@ export default function TabPage() {
 
   return (
     <div className="tab-page" ref={heightRef}>
-      <div className="tab-page--header">
-        <div className="tab-page--top">
-          <div className="tab-page--name">
-            <ChangeableText value={songName} setValue={setSongName} />
-          </div>
-          <div className="tab-page--artist">
-            <ChangeableText value={songArtist} setValue={setSongArtist} />
-          </div>
-
-          <div>{currentSong.bpm} BPM</div>
-        </div>
-        {playingRef.current ? (
-          <button onClick={handlePause} className="play-btn">
-            <PauseFill />
-          </button>
-        ) : (
-          <button onClick={playSong} className="play-btn">
-            <PlayFill />
-          </button>
-        )}
-        <br />
-        <div className="speed-wrapper">
-          <input type="range" onChange={updateSpeed} value={speed} max={1} min={0.01} step={0.01} />
-          <span>{Math.floor(speed * 100)}% Speed</span>
-        </div>
-        <br />
-        <div className="volume-wrapper">
-          <input type="range" onChange={updateVolume} value={volume} max={1} min={0} step={0.01} />
-          <span>{Math.floor(volume * 100)}% Volume</span>
-        </div>
-
-        <select
-          className="instrument-dropdown"
-          onChange={(e) => {
-            setActiveInstrument(e.target.selectedIndex);
-          }}
-        >
-          {instrumentDropdown}
-        </select>
-      </div>
+      <TopPane
+        songName={songName}
+        setSongName={setSongName}
+        songArtist={songArtist}
+        setSongArtist={setSongArtist}
+        playingRef={playingRef}
+        playSong={playSong}
+        handlePause={handlePause}
+        speed={speed}
+        updateSpeed={updateSpeed}
+        volume={volume}
+        updateVolume={updateVolume}
+        setActiveInstrument={setActiveInstrument}
+        currentSong={currentSong}
+      />
 
       <HeightContext.Provider value={height}>
         <InstrumentContext.Provider value={activeInstrument}>
