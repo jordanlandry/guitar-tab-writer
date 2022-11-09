@@ -5,6 +5,7 @@ import blankSong from "../data/blankSong";
 import mySong from "../data/my_song";
 import oneSong from "../data/one";
 import { test } from "../data/test";
+import users from "../data/users";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import ChangeableText from "./ChangeableText";
 import Chart from "./Chart";
@@ -12,18 +13,21 @@ import TopPane from "./TopPane";
 
 export const InstrumentContext = createContext<null | number>(null);
 export const HeightContext = createContext<null | number>(null);
-export default function TabPage() {
+
+type Props = { setActivePage: any };
+export default function TabPage({ setActivePage }: Props) {
   const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-  const [currentSong, setCurrentSong] = useState(oneSong);
+  const [user, setUser] = useLocalStorage("user", 0);
+  const [songIndex, setSongIndex] = useLocalStorage("songIndex", 0);
   const [speed, setSpeed] = useState(1); // Number between 0 and 1 (0.5 is half speed)
   const [volume, setVolume] = useState(1); // Number between 0 and 1 (0.5 is half volume)
   const [playing, setPlaying] = useState(false);
 
   const [pausePosition, setPausePosition] = useState({ measure: 0, beat: 0 });
   const [currentPosition, setCurrentPosition] = useState({ measure: 0, beat: 0 });
-
   const [activeInstrument, setActiveInstrument] = useState(0);
+  const [counter, setCounter] = useState(0);
 
   const [height, setHeight] = useState(0);
   const heightRef = useRef<any>(null);
@@ -32,9 +36,11 @@ export default function TabPage() {
     setHeight(heightRef.current?.clientHeight || 0);
   });
 
-  const [songName, setSongName] = useLocalStorage("songName", currentSong.name);
-  const [songArtist, setSongArtist] = useLocalStorage("songArtist", currentSong.artist);
-  const [songBPM, setSongBPM] = useLocalStorage("songBPM", currentSong.bpm);
+  const currentSong = songIndex === -1 ? blankSong : users[user].songs[songIndex];
+
+  const [songName, setSongName] = useState(currentSong.name);
+  const [songArtist, setSongArtist] = useState(currentSong.artist);
+  const [songBPM, setSongBPM] = useState(currentSong.bpm);
 
   // Refs
   const playingRef = useRef(playing);
@@ -151,11 +157,13 @@ export default function TabPage() {
   const handleNewMeasure = () => {
     const newSong = { ...currentSong };
     newSong.measures.push([]);
-    setCurrentSong(newSong);
+    // Force re-render
+    setCounter((prev) => prev + 1);
   };
 
   return (
     <div className="tab-page">
+      <button onClick={() => setActivePage(0)}>Select Song</button>
       <div ref={heightRef}>
         <TopPane
           songName={songName}

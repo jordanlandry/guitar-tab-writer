@@ -4,8 +4,12 @@ import TabPage from "./components/TabPage";
 import "./styles.css";
 
 function App() {
-  const [activePage, setActivePage] = useState(1); // Temp for testing
-  return <div className="App">{activePage === 0 ? <SongPage setActivePage={setActivePage} /> : <TabPage />}</div>;
+  const [activePage, setActivePage] = useState(0); // Temp for testing
+  return (
+    <div className="App">
+      {activePage === 0 ? <SongPage setActivePage={setActivePage} /> : <TabPage setActivePage={setActivePage} />}
+    </div>
+  );
 }
 
 export default App;

@@ -73,10 +73,38 @@ export default function Chart({ data, setPausePosition, setCurrentPosition, play
             measureIndex: selectedNoteRef.current.measureIndex,
             noteIndex: data.measures[selectedNoteRef.current.measureIndex].indexOf(note),
           });
+
+          selectedNoteRef.current = {
+            measureIndex: selectedNoteRef.current.measureIndex,
+            noteIndex: data.measures[selectedNoteRef.current.measureIndex].indexOf(note),
+          };
+
           break;
+        }
+
+        // If we are at the first note in the measure go to the last note in the previous measure
+        else if (i === 31) {
+          // If we are at the end of the measure go to the next measure
+          const prevMeasure = data.measures[selectedNoteRef.current.measureIndex - 1];
+          if (prevMeasure) {
+            const reversed = prevMeasure.slice().reverse(); // Reverse the array so we can find the last note
+            const note = reversed.find((note: any) => note.instrument === activeInstrument);
+            if (note) {
+              setSelectedNote({
+                measureIndex: selectedNoteRef.current.measureIndex - 1,
+                noteIndex: prevMeasure.indexOf(note),
+              });
+
+              selectedNoteRef.current = {
+                measureIndex: selectedNoteRef.current.measureIndex - 1,
+                noteIndex: prevMeasure.indexOf(note),
+              };
+            }
+          }
         }
       }
     },
+
     ArrowRight: (note: any) => {
       // Go to next note
       // Find note with most previous beatcount
@@ -93,7 +121,29 @@ export default function Chart({ data, setPausePosition, setCurrentPosition, play
             measureIndex: selectedNoteRef.current.measureIndex,
             noteIndex: data.measures[selectedNoteRef.current.measureIndex].indexOf(note),
           });
+
+          selectedNoteRef.current = {
+            measureIndex: selectedNoteRef.current.measureIndex,
+            noteIndex: data.measures[selectedNoteRef.current.measureIndex].indexOf(note),
+          };
           break;
+        } else if (i === 31) {
+          // If we are at the end of the measure go to the next measure
+          const nextMeasure = data.measures[selectedNoteRef.current.measureIndex + 1];
+          if (nextMeasure) {
+            const note = nextMeasure.find((note: any) => note.instrument === activeInstrument);
+            if (note) {
+              setSelectedNote({
+                measureIndex: selectedNoteRef.current.measureIndex + 1,
+                noteIndex: nextMeasure.indexOf(note),
+              });
+
+              selectedNoteRef.current = {
+                measureIndex: selectedNoteRef.current.measureIndex + 1,
+                noteIndex: nextMeasure.indexOf(note),
+              };
+            }
+          }
         }
       }
     },
@@ -105,8 +155,12 @@ export default function Chart({ data, setPausePosition, setCurrentPosition, play
       const { measureIndex, noteIndex } = selectedNoteRef.current;
       if (event.key === "Escape") setSelectedNote({ measureIndex: -1, noteIndex: -1 }); // Deselect note
 
-      event.preventDefault();
-      // change fret of note on keyboard input
+      if (event.key === "ArrowUp" || event.key === "ArrowDown") {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+
+      // Change fret of note on keyboard input
       if (measureIndex !== -1 && noteIndex !== -1) {
         const note = data.measures[measureIndex][noteIndex];
 
@@ -121,7 +175,12 @@ export default function Chart({ data, setPausePosition, setCurrentPosition, play
           (event.key === "ArrowLeft" && event.ctrlKey) ||
           (event.key === "ArrowRight" && event.ctrlKey)
         )
-          play(getNote(note.fret, note.guitarString), activeInstrument);
+          console.log(selectedNoteRef.current);
+
+        const { guitarString, fret } =
+          data.measures[selectedNoteRef.current.measureIndex][selectedNoteRef.current.noteIndex];
+
+        play(getNote(fret, guitarString), activeInstrument);
 
         // Force a re-render
         setCount((prevCount) => prevCount + 1);
@@ -186,7 +245,6 @@ export default function Chart({ data, setPausePosition, setCurrentPosition, play
         STRING_COUNT * LINE_HEIGHT * Math.floor(index / 2) +
         Math.floor(index / 2) * 20; // i * 10 is the margin
 
-      // If the note is not the right instrument, don't show it
       return note.instrument === activeInstrument ? (
         <div
           id={note.id}
@@ -209,10 +267,9 @@ export default function Chart({ data, setPausePosition, setCurrentPosition, play
     return <div key={nextId()}>{fretElements}</div>;
   });
 
-  const lineElements = data.measures.map((measure, i) => {
-    // Need a left and a right
-    return <Line key={nextId()} tuning={data.tuning} lineHeight={LINE_HEIGHT} maxWidth={width} />;
-  });
+  const lineElements = data.measures.map((measure, i) => (
+    <Line key={nextId()} tuning={data.tuning} lineHeight={LINE_HEIGHT} maxWidth={width} />
+  ));
 
   return (
     <div className="chart-wrapper">
