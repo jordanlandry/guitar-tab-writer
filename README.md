@@ -24,7 +24,7 @@ TODO Add the following features
 
 - Re style
 - Adjust sizing for mobile users
-- Editible tabs
+
 - Add progress line that runs through the tab (hovers over the note that its playing)
 - Add bends and slides (probably by using a library to adjust audio pitch and adjusting it over a period of time to create a bend effect, this would also make it so you only need one sound per instrument and can edit it in realtime to create any pitch)
 - Create your own tabs

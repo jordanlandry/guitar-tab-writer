@@ -116,6 +116,7 @@ export default function Chart({ data, setPausePosition, setCurrentPosition, play
             note.instrument === activeInstrument
           );
         });
+
         if (note) {
           setSelectedNote({
             measureIndex: selectedNoteRef.current.measureIndex,
@@ -155,7 +156,7 @@ export default function Chart({ data, setPausePosition, setCurrentPosition, play
       const { measureIndex, noteIndex } = selectedNoteRef.current;
       if (event.key === "Escape") setSelectedNote({ measureIndex: -1, noteIndex: -1 }); // Deselect note
 
-      if (event.key === "ArrowUp" || event.key === "ArrowDown") {
+      if (event.key === "ArrowUp" || event.key === "ArrowDown" || event.key === "Space") {
         event.preventDefault();
         event.stopPropagation();
       }
@@ -174,13 +175,12 @@ export default function Chart({ data, setPausePosition, setCurrentPosition, play
           event.key === "ArrowDown" ||
           (event.key === "ArrowLeft" && event.ctrlKey) ||
           (event.key === "ArrowRight" && event.ctrlKey)
-        )
-          console.log(selectedNoteRef.current);
+        ) {
+          const { guitarString, fret } =
+            data.measures[selectedNoteRef.current.measureIndex][selectedNoteRef.current.noteIndex];
 
-        const { guitarString, fret } =
-          data.measures[selectedNoteRef.current.measureIndex][selectedNoteRef.current.noteIndex];
-
-        play(getNote(fret, guitarString), activeInstrument);
+          play(getNote(fret, guitarString), activeInstrument);
+        }
 
         // Force a re-render
         setCount((prevCount) => prevCount + 1);
@@ -195,7 +195,7 @@ export default function Chart({ data, setPausePosition, setCurrentPosition, play
   const STRING_COUNT = data.tuning.length;
   const LINE_HEIGHT = 15;
   const BASE_X = 45;
-  const BASE_Y = topOffset + 13;
+  const BASE_Y = topOffset + 35;
   const X_OFFSET = width / 64;
   const CENTER_OFFSET = (window.innerWidth - width) / 2;
 

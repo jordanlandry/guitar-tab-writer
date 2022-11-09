@@ -37,6 +37,10 @@ export default function TabPage({ setActivePage }: Props) {
   });
 
   const currentSong = songIndex === -1 ? blankSong : users[user].songs[songIndex];
+  if (songIndex === -1) {
+    users[user].songs.push(blankSong);
+    setSongIndex(users[user].songs.length - 1);
+  }
 
   const [songName, setSongName] = useState(currentSong.name);
   const [songArtist, setSongArtist] = useState(currentSong.artist);
@@ -161,15 +165,25 @@ export default function TabPage({ setActivePage }: Props) {
     setCounter((prev) => prev + 1);
   };
 
+  const updateSongName = (newName: string) => {
+    users[user].songs[songIndex].name = newName;
+    setSongName(newName);
+  };
+
+  const updateSongArtist = (newArtist: string) => {
+    users[user].songs[songIndex].artist = newArtist;
+    setSongArtist(newArtist);
+  };
+
   return (
     <div className="tab-page">
       <button onClick={() => setActivePage(0)}>Select Song</button>
       <div ref={heightRef}>
         <TopPane
           songName={songName}
-          setSongName={setSongName}
+          setSongName={updateSongName}
           songArtist={songArtist}
-          setSongArtist={setSongArtist}
+          setSongArtist={updateSongArtist}
           playingRef={playingRef}
           playSong={playSong}
           handlePause={handlePause}
