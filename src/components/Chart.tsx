@@ -195,7 +195,7 @@ export default function Chart({ data, setPausePosition, setCurrentPosition, play
   const STRING_COUNT = data.tuning.length;
   const LINE_HEIGHT = 15;
   const BASE_X = 45;
-  const BASE_Y = topOffset + 35;
+  const BASE_Y = topOffset + 40;
   const X_OFFSET = width / 64;
   const CENTER_OFFSET = (window.innerWidth - width) / 2;
 

@@ -1,5 +1,5 @@
 :root {
-  --background-color: #f5f5f5;
+  --background-color: white;
   --text-color: #333;
 }
 
@@ -96,6 +96,7 @@ body {
   transition: 0.2s;
   font-size: 2rem;
   margin: 10px auto;
+  background-color: var(--background-color);
 }
 
 .play-btn:hover {
@@ -107,7 +108,7 @@ body {
   left: 10px;
   display: flex;
   align-items: center;
-  top: 5px;
+  top: 45px;
 }
 
 .volume-wrapper {
@@ -115,7 +116,7 @@ body {
   left: 10px;
   display: flex;
   align-items: center;
-  top: 25px;
+  top: 75px;
 }
 
 .selected {
@@ -128,8 +129,8 @@ body {
   align-items: center;
   justify-content: center;
   position: absolute;
-  width: 20px;
-  height: 20px;
+  width: 10px;
+  height: 10px;
 
   background-color: var(--background-color);
   transition: 0.2s;
@@ -203,4 +204,35 @@ body {
   background-color: black;
   position: absolute;
   width: 1px;
+}
+
+.song-select-btn {
+  cursor: pointer;
+  transition: 0.2s;
+  padding: 10px;
+  width: 50vw;
+
+  border: none;
+  outline: none;
+  font-size: 1.2rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+  transition: 0.3s;
+  background-color: white;
+}
+
+.song-select-btn:hover {
+  filter: brightness(0.98);
+}
+
+.song-select-btn-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  margin-top: 10px;
+  align-items: center;
+}
+
+.song-select-btn-wrapper:first-child {
+  border-top: 1px solid rgba(0, 0, 0, 0.2);
 }

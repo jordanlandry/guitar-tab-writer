@@ -18,12 +18,16 @@ export default function SongPage({ setActivePage }: Props) {
   };
 
   return (
-    <div>
-      <button onClick={() => handleClickSong(-1)}>Create Song</button>
+    <div className="song-select-btn-wrapper">
+      <button onClick={() => handleClickSong(-1)} className="song-select-btn">
+        Create Song
+      </button>
       {users[user].songs.map((song, i) => {
         return (
           <div key={i}>
-            <button onClick={() => handleClickSong(i)}>{song.name}</button>
+            <button onClick={() => handleClickSong(i)} className="song-select-btn">
+              {song.name}
+            </button>
           </div>
         );
       })}
