@@ -25,9 +25,9 @@ TODO Add the following features
 - Re style
 - Adjust sizing for mobile users
 
+- Fix centering for pending notes/placing notes
 - Add progress line that runs through the tab (hovers over the note that its playing)
 - Add bends and slides (probably by using a library to adjust audio pitch and adjusting it over a period of time to create a bend effect, this would also make it so you only need one sound per instrument and can edit it in realtime to create any pitch)
-- Create your own tabs
 - Add more instruments
 - Change BPM at a particular spot
 - Change timing eg 3/4 time, 4/4 time etc

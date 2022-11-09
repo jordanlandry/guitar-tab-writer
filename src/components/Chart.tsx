@@ -16,8 +16,27 @@ export default function Chart({ data, setPausePosition, setCurrentPosition, play
   const [selectedNote, setSelectedNote] = useState({ measureIndex: -1, noteIndex: -1 });
   const topOffset = useContext(HeightContext)!;
 
-  // This is temporary just to force a re-render when a note is changed`
+  // Note mouse position
+  const [noteBeat, setNoteBeat] = useState(-1);
+  const [noteMeasure, setNoteMeasure] = useState(0);
+  const [noteString, setNoteString] = useState(1);
+
+  const noteBeatRef = useRef(noteBeat);
+  noteBeatRef.current = noteBeat;
+
+  const noteMeasureRef = useRef(noteMeasure);
+  noteMeasureRef.current = noteMeasure;
+
+  const noteStringRef = useRef(noteString);
+  noteStringRef.current = noteString;
+
+  // This is temporary just to force a re-render when a note is changed
   const [count, setCount] = useState(0);
+
+  const [hoveringOnGrid, setHoveringOnGrid] = useState(false);
+
+  const hoveringOnGridRef = useRef(hoveringOnGrid);
+  hoveringOnGridRef.current = hoveringOnGrid;
 
   // Selected note ref
   const selectedNoteRef = useRef(selectedNote);
@@ -267,14 +286,87 @@ export default function Chart({ data, setPausePosition, setCurrentPosition, play
     return <div key={nextId()}>{fretElements}</div>;
   });
 
+  const pendingNoteElement = hoveringOnGrid ? (
+    <div
+      className="note-pending"
+      style={{
+        position: "absolute",
+        top: `${
+          BASE_Y + (noteString - 1.5) * LINE_HEIGHT + STRING_COUNT * LINE_HEIGHT * Math.floor(noteMeasure / 2)
+        }px`,
+        left: `${BASE_X + X_OFFSET * noteBeat + (width / 2) * (noteMeasure % 2) + CENTER_OFFSET}px`,
+      }}
+    >
+      0
+    </div>
+  ) : null;
+
+  BASE_X + X_OFFSET * noteBeat + (width / 2) * (noteMeasure % 2) + CENTER_OFFSET;
+
   const lineElements = data.measures.map((measure, i) => (
     <Line key={nextId()} tuning={data.tuning} lineHeight={LINE_HEIGHT} maxWidth={width} />
   ));
 
+  // mouse move and click event listener
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!hoveringOnGridRef.current) return;
+      // Get the note position on the grid where your mouse is
+
+      // To get what position the mouse is in on the grid I need the starting position of the grid and the width of the grid
+      const gridStart = BASE_X + CENTER_OFFSET;
+
+      // Get the note position on the grid where your mouse is
+      setNoteBeat(Math.floor((e.clientX - gridStart) / X_OFFSET) + 2); // TODO fix this
+      noteBeatRef.current = Math.floor((e.clientX - gridStart) / X_OFFSET) + 2;
+    };
+
+    const handleMouseClick = (e: MouseEvent) => {
+      if (!hoveringOnGridRef.current) return;
+
+      console.log(noteBeat);
+      if (noteBeatRef.current > 0) {
+        // Check if that note already exists
+        const otherNote = data.measures[noteMeasure].find(
+          (note) => note.beatCount === noteBeat && note.guitarString === noteStringRef.current
+        );
+
+        if (otherNote) return;
+
+        const newNote = {
+          id: nextId(),
+          guitarString: noteStringRef.current,
+          fret: 0,
+          beatCount: noteBeatRef.current,
+          type: "normal",
+          instrument: activeInstrument,
+        };
+
+        data.measures[noteMeasureRef.current].push(newNote);
+
+        setCount((prevCount) => prevCount + 1);
+      }
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("click", handleMouseClick);
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("click", handleMouseClick);
+    };
+  }, []);
+
+  console.log(pendingNoteElement);
   return (
     <div className="chart-wrapper">
       {/* {tuningElements} */}
-      <div className="line-grid" style={{ maxWidth: MAX_WIDTH, margin: "auto" }}>
+      {pendingNoteElement}
+      <div
+        onMouseEnter={() => setHoveringOnGrid(true)}
+        onMouseLeave={() => setHoveringOnGrid(false)}
+        className="line-grid"
+        style={{ maxWidth: MAX_WIDTH, margin: "auto" }}
+      >
         {lineElements}
       </div>
       {noteElements}

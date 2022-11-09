@@ -3,7 +3,7 @@ import nextId from "react-id-generator";
 const blankSong = {
   name: "My Song",
   artist: "Me",
-  bpm: 50,
+  bpm: 120,
   tuning: ["e4", "b4", "g3", "d3", "a3", "e2"], // From high e to low e
 
   instruments: [
