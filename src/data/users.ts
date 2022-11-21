@@ -30,6 +30,7 @@ const users: userType[] = [
             { guitarString: 4, fret: 4, beatCount: 4, type: "normal", instrument: 0, id: nextId() },
             { guitarString: 5, fret: 2, beatCount: 8, type: "normal", instrument: 0, id: nextId() },
             { guitarString: 4, fret: 0, beatCount: 12, type: "normal", instrument: 0, id: nextId() },
+            { guitarString: 4, fret: 0, beatCount: 31, type: "normal", instrument: 0, id: nextId() },
           ],
           [
             { guitarString: 6, fret: 3, beatCount: 0, type: "normal", instrument: 0, id: nextId() },

@@ -11,6 +11,9 @@ export default function Chart({ data, setPausePosition, setCurrentPosition, play
   const MAX_PIXEL_WIDTH = 1500;
   const MAX_WIDTH = Math.min(window.innerWidth * 0.9, MAX_PIXEL_WIDTH);
   const [width, setWidth] = useState(Math.min(window.innerWidth, MAX_WIDTH));
+  const widthRef = useRef<any>(width);
+  widthRef.current = width;
+
   const activeInstrument = useContext(InstrumentContext)!;
 
   const [selectedNote, setSelectedNote] = useState({ measureIndex: -1, noteIndex: -1 });
@@ -67,6 +70,7 @@ export default function Chart({ data, setPausePosition, setCurrentPosition, play
     ArrowDown: (note: any) => (note.fret = Math.max(0, note.fret - 1)),
     ArrowLeft: (note: any) => (note.beatCount = Math.max(0, note.beatCount - 1)),
     ArrowRight: (note: any) => (note.beatCount = Math.min(32, note.beatCount + 1)), // 32 is the current max beat count will change to be dynamic
+    Delete: (note: any) => console.log(note),
   };
 
   const SHIFT_KEYBINDS: any = {
@@ -215,8 +219,8 @@ export default function Chart({ data, setPausePosition, setCurrentPosition, play
   const LINE_HEIGHT = 15;
   const BASE_X = 45;
   const BASE_Y = topOffset + 40;
-  const X_OFFSET = width / 64;
-  const CENTER_OFFSET = (window.innerWidth - width) / 2;
+  const X_OFFSET = widthRef.current / 64;
+  const CENTER_OFFSET = (window.innerWidth - widthRef.current) / 2;
 
   // Show the tuning
   const tuningElements = data.tuning.map((note, i) => {
@@ -255,7 +259,9 @@ export default function Chart({ data, setPausePosition, setCurrentPosition, play
     let measureCount = index % 2; // 0 or 1 (0 is left, 1 is right)
 
     const fretElements = notes.map((note, noteIndex) => {
-      let noteX = BASE_X + X_OFFSET * note.beatCount + (width / 2) * measureCount + CENTER_OFFSET;
+      // If i have 64 notes in 1500px, each note is 1500 / 64 = 23.4375px wide
+      let noteOffset = widthRef.current / 64;
+      let noteX = CENTER_OFFSET + noteOffset * note.beatCount + (widthRef.current / 2) * measureCount + 5; // + 5 to give the note a little space
 
       // Need to add height of measure to each note
       let noteY =
@@ -264,6 +270,7 @@ export default function Chart({ data, setPausePosition, setCurrentPosition, play
         STRING_COUNT * LINE_HEIGHT * Math.floor(index / 2) +
         Math.floor(index / 2) * 20; // i * 10 is the margin
 
+      // Elements
       return note.instrument === activeInstrument ? (
         <div
           id={note.id}
@@ -286,6 +293,7 @@ export default function Chart({ data, setPausePosition, setCurrentPosition, play
     return <div key={nextId()}>{fretElements}</div>;
   });
 
+  // Pending note is when you hover over a fret and it shows you what note you will get
   const pendingNoteElement = hoveringOnGrid ? (
     <div
       className="note-pending"
@@ -294,17 +302,17 @@ export default function Chart({ data, setPausePosition, setCurrentPosition, play
         top: `${
           BASE_Y + (noteString - 1.5) * LINE_HEIGHT + STRING_COUNT * LINE_HEIGHT * Math.floor(noteMeasure / 2)
         }px`,
-        left: `${BASE_X + X_OFFSET * noteBeat + (width / 2) * (noteMeasure % 2) + CENTER_OFFSET}px`,
+        left: `${BASE_X + X_OFFSET * noteBeat + (widthRef.current / 2) * (noteMeasure % 2) + CENTER_OFFSET}px`,
       }}
     >
       0
     </div>
   ) : null;
 
-  BASE_X + X_OFFSET * noteBeat + (width / 2) * (noteMeasure % 2) + CENTER_OFFSET;
+  BASE_X + X_OFFSET * noteBeat + (widthRef.current / 2) * (noteMeasure % 2) + CENTER_OFFSET;
 
   const lineElements = data.measures.map((measure, i) => (
-    <Line key={nextId()} tuning={data.tuning} lineHeight={LINE_HEIGHT} maxWidth={width} />
+    <Line key={nextId()} tuning={data.tuning} lineHeight={LINE_HEIGHT} maxWidth={widthRef.current} />
   ));
 
   // mouse move and click event listener
@@ -314,17 +322,27 @@ export default function Chart({ data, setPausePosition, setCurrentPosition, play
       // Get the note position on the grid where your mouse is
 
       // To get what position the mouse is in on the grid I need the starting position of the grid and the width of the grid
-      const gridStart = BASE_X + CENTER_OFFSET;
+      // const gridStart = BASE_X + CENTER_OFFSET;
 
       // Get the note position on the grid where your mouse is
-      setNoteBeat(Math.floor((e.clientX - gridStart) / X_OFFSET) + 2); // TODO fix this
-      noteBeatRef.current = Math.floor((e.clientX - gridStart) / X_OFFSET) + 2;
+      // setNoteBeat(Math.floor((e.clientX - gridStart) / X_OFFSET)); // TODO fix this
+      // noteBeatRef.current = Math.floor((e.clientX - gridStart) / X_OFFSET);
+
+      // Get the string position on the grid where your mouse is
+      // setNoteString(Math.floor((e.clientY - BASE_Y) / LINE_HEIGHT) + 1);
+      // noteStringRef.current = Math.floor((e.clientY - BASE_Y) / LINE_HEIGHT) + 1;
+      // let position = 0;
+
+      const baseX = CENTER_OFFSET;
+      let position = 0;
+
+      console.log(Math.floor((e.clientX - baseX) / 32));
+      setNoteBeat(position);
     };
 
     const handleMouseClick = (e: MouseEvent) => {
       if (!hoveringOnGridRef.current) return;
 
-      console.log(noteBeat);
       if (noteBeatRef.current > 0) {
         // Check if that note already exists
         const otherNote = data.measures[noteMeasure].find(
@@ -356,10 +374,8 @@ export default function Chart({ data, setPausePosition, setCurrentPosition, play
     };
   }, []);
 
-  console.log(pendingNoteElement);
   return (
     <div className="chart-wrapper">
-      {/* {tuningElements} */}
       {pendingNoteElement}
       <div
         onMouseEnter={() => setHoveringOnGrid(true)}

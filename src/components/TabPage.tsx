@@ -77,8 +77,7 @@ export default function TabPage({ setActivePage }: Props) {
 
     if (instrumentIndex === activeInstrumentRef.current) audio.volume = volumeRef.current * 1;
     else audio.volume = volumeRef.current * 0.75;
-
-    audio.play();
+    if (audio.src) audio.play();
   };
 
   const NOTE_VALUES = ["ab", "a", "bb", "b", "c", "db", "d", "eb", "e", "f", "gb", "g"];
