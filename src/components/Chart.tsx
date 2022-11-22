@@ -219,8 +219,9 @@ export default function Chart({ data, setPausePosition, setCurrentPosition, play
   const LINE_HEIGHT = 15;
   const BASE_X = 45;
   const BASE_Y = topOffset + 40;
-  const X_OFFSET = widthRef.current / 64;
+  const NOTE_PX_SIZE = widthRef.current / 64;
   const CENTER_OFFSET = (window.innerWidth - widthRef.current) / 2;
+  const NOTE_OFFSET = widthRef.current / 64;
 
   // Show the tuning
   const tuningElements = data.tuning.map((note, i) => {
@@ -260,8 +261,8 @@ export default function Chart({ data, setPausePosition, setCurrentPosition, play
 
     const fretElements = notes.map((note, noteIndex) => {
       // If i have 64 notes in 1500px, each note is 1500 / 64 = 23.4375px wide
-      let noteOffset = widthRef.current / 64;
-      let noteX = CENTER_OFFSET + noteOffset * note.beatCount + (widthRef.current / 2) * measureCount + 5; // + 5 to give the note a little space
+
+      let noteX = CENTER_OFFSET + NOTE_OFFSET * note.beatCount + (widthRef.current / 2) * measureCount + 5; // + 5 to give the note a little space
 
       // Need to add height of measure to each note
       let noteY =
@@ -294,6 +295,7 @@ export default function Chart({ data, setPausePosition, setCurrentPosition, play
   });
 
   // Pending note is when you hover over a fret and it shows you what note you will get
+  let left = CENTER_OFFSET + NOTE_OFFSET * noteBeat + (widthRef.current / 2) * noteMeasure + 5; // + 5 to give the note a little space
   const pendingNoteElement = hoveringOnGrid ? (
     <div
       className="note-pending"
@@ -302,15 +304,14 @@ export default function Chart({ data, setPausePosition, setCurrentPosition, play
         top: `${
           BASE_Y + (noteString - 1.5) * LINE_HEIGHT + STRING_COUNT * LINE_HEIGHT * Math.floor(noteMeasure / 2)
         }px`,
-        left: `${BASE_X + X_OFFSET * noteBeat + (widthRef.current / 2) * (noteMeasure % 2) + CENTER_OFFSET}px`,
+        left: `${left}px`,
       }}
     >
       0
     </div>
   ) : null;
 
-  BASE_X + X_OFFSET * noteBeat + (widthRef.current / 2) * (noteMeasure % 2) + CENTER_OFFSET;
-
+  // BASE_X + X_OFFSET * noteBeat + (widthRef.current / 2) * (noteMeasure % 2) + CENTER_OFFSET;
   const lineElements = data.measures.map((measure, i) => (
     <Line key={nextId()} tuning={data.tuning} lineHeight={LINE_HEIGHT} maxWidth={widthRef.current} />
   ));
@@ -319,51 +320,44 @@ export default function Chart({ data, setPausePosition, setCurrentPosition, play
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (!hoveringOnGridRef.current) return;
-      // Get the note position on the grid where your mouse is
 
-      // To get what position the mouse is in on the grid I need the starting position of the grid and the width of the grid
-      // const gridStart = BASE_X + CENTER_OFFSET;
+      // Get note beat count based on mouse position
+      // At very left of grid, beat count is 0
+      // At very right of grid, beat count is 64 (64 notes in 1500px) meaning each measure is 32 beats (32 notes in 750px)
 
-      // Get the note position on the grid where your mouse is
-      // setNoteBeat(Math.floor((e.clientX - gridStart) / X_OFFSET)); // TODO fix this
-      // noteBeatRef.current = Math.floor((e.clientX - gridStart) / X_OFFSET);
+      let position;
+      position = Math.floor((e.clientX - CENTER_OFFSET) / NOTE_PX_SIZE);
+      position = position < 0 ? 0 : position > 63 ? 63 : position; // clamp between 0 and 63
 
-      // Get the string position on the grid where your mouse is
-      // setNoteString(Math.floor((e.clientY - BASE_Y) / LINE_HEIGHT) + 1);
-      // noteStringRef.current = Math.floor((e.clientY - BASE_Y) / LINE_HEIGHT) + 1;
-      // let position = 0;
-
-      const baseX = CENTER_OFFSET;
-      let position = 0;
-
-      console.log(Math.floor((e.clientX - baseX) / 32));
       setNoteBeat(position);
     };
 
     const handleMouseClick = (e: MouseEvent) => {
       if (!hoveringOnGridRef.current) return;
+      if (noteBeatRef.current < 0 || noteBeatRef.current > 63) return;
 
-      if (noteBeatRef.current > 0) {
-        // Check if that note already exists
-        const otherNote = data.measures[noteMeasure].find(
-          (note) => note.beatCount === noteBeat && note.guitarString === noteStringRef.current
-        );
+      // Check if that note already exists
+      const otherNote = data.measures[noteMeasure].find((note) => {
+        console.log(note.beatCount);
+        note.beatCount === noteBeat && note.guitarString === noteStringRef.current;
+      });
 
-        if (otherNote) return;
+      console.log(otherNote);
 
-        const newNote = {
-          id: nextId(),
-          guitarString: noteStringRef.current,
-          fret: 0,
-          beatCount: noteBeatRef.current,
-          type: "normal",
-          instrument: activeInstrument,
-        };
+      if (otherNote) return;
 
-        data.measures[noteMeasureRef.current].push(newNote);
+      const newNote = {
+        id: nextId(),
+        guitarString: noteStringRef.current,
+        fret: 0,
+        beatCount: noteBeatRef.current,
+        type: "normal",
+        instrument: activeInstrument,
+      };
 
-        setCount((prevCount) => prevCount + 1);
-      }
+      data.measures[noteMeasureRef.current].push(newNote);
+
+      setCount((prevCount) => prevCount + 1);
     };
 
     window.addEventListener("mousemove", handleMouseMove);
