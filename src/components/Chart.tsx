@@ -70,7 +70,28 @@ export default function Chart({ data, setPausePosition, setCurrentPosition, play
     ArrowDown: (note: any) => (note.fret = Math.max(0, note.fret - 1)),
     ArrowLeft: (note: any) => (note.beatCount = Math.max(0, note.beatCount - 1)),
     ArrowRight: (note: any) => (note.beatCount = Math.min(32, note.beatCount + 1)), // 32 is the current max beat count will change to be dynamic
-    Delete: (note: any) => console.log(note),
+    Delete: (note: any) => {
+      // Find the note in the song data and remove it
+
+      // const n = data.measures[noteMeasure].find((note) => {
+      //   return (
+      //     note.beatCount === selectedNoteRef.current.noteIndex &&
+      //     note.guitarString === selectedNoteRef.current.
+      //   );
+      // });
+
+      // Using the selected index find the note in the song data and remove it
+
+      const n = data.measures[selectedNoteRef.current.measureIndex][selectedNoteRef.current.noteIndex];
+
+      console.log(n);
+
+      // Update the selected note
+      setSelectedNote({
+        measureIndex: -1,
+        noteIndex: -1,
+      });
+    },
   };
 
   const SHIFT_KEYBINDS: any = {
@@ -338,8 +359,8 @@ export default function Chart({ data, setPausePosition, setCurrentPosition, play
 
       // Check if that note already exists
       const otherNote = data.measures[noteMeasure].find((note) => {
-        console.log(note.beatCount);
-        note.beatCount === noteBeat && note.guitarString === noteStringRef.current;
+        // console.log(note.beat1Count, noteBeatRef.current, note.guitarString, noteStringRef.current);
+        return note.beatCount === noteBeatRef.current && note.guitarString === noteStringRef.current;
       });
 
       console.log(otherNote);
@@ -362,18 +383,24 @@ export default function Chart({ data, setPausePosition, setCurrentPosition, play
 
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("click", handleMouseClick);
+
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("click", handleMouseClick);
     };
   }, []);
 
+  const updateGridHover = (val: boolean) => {
+    hoveringOnGridRef.current = val;
+    setHoveringOnGrid(val);
+  };
+
   return (
     <div className="chart-wrapper">
       {pendingNoteElement}
       <div
-        onMouseEnter={() => setHoveringOnGrid(true)}
-        onMouseLeave={() => setHoveringOnGrid(false)}
+        onMouseEnter={() => updateGridHover(true)}
+        onMouseLeave={() => updateGridHover(false)}
         className="line-grid"
         style={{ maxWidth: MAX_WIDTH, margin: "auto" }}
       >
